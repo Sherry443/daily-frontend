@@ -199,31 +199,69 @@ function Orders({ user, onLogout }) {
   const [socket, setSocket] = useState(null);
   const [updatingOrder, setUpdatingOrder] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all');
+  const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    fetchOrders();
+    // Request notification permission
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
 
-    const newSocket = io(BACKEND_URL);
-    setSocket(newSocket);
+    // Initialize Socket.IO
+    const newSocket = io(BACKEND_URL, {
+      transports: ['websocket', 'polling'],
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      timeout: 10000,
+    });
 
     newSocket.on('connect', () => {
-      console.log('✅ Connected to server');
+      console.log('✅ Connected to Socket.IO server');
+      setConnected(true);
+      // Request initial orders from socket
+      newSocket.emit('get_orders');
     });
 
+    newSocket.on('disconnect', () => {
+      console.log('❌ Disconnected from Socket.IO server');
+      setConnected(false);
+    });
+
+    newSocket.on('connect_error', (error) => {
+      console.error('❌ Socket connection error:', error);
+      setConnected(false);
+    });
+
+    // Listen for initial orders list
+    newSocket.on('orders_list', (ordersData) => {
+      console.log('📦 Received orders list:', ordersData.length);
+      setOrders(ordersData);
+      setLoading(false);
+    });
+
+    // Listen for new orders (real-time)
     newSocket.on('new_order', (newOrder) => {
-      console.log('🔔 NEW ORDER:', newOrder);
+      console.log('🔔 NEW ORDER received:', newOrder.order_number);
       setOrders(prevOrders => [newOrder, ...prevOrders]);
       playNotificationSound();
+      showNotification('New Order!', `Order ${newOrder.order_number} from ${newOrder.customer_full_name}`);
     });
 
+    // Listen for order updates (status changes)
     newSocket.on('order_updated', (updatedOrder) => {
-      console.log('🔄 ORDER UPDATED:', updatedOrder);
+      console.log('🔄 ORDER UPDATED:', updatedOrder.order_number);
       setOrders(prevOrders => 
         prevOrders.map(order => 
           order._id === updatedOrder._id ? updatedOrder : order
         )
       );
     });
+
+    setSocket(newSocket);
+
+    // Fallback: Also fetch via API
+    fetchOrders();
 
     return () => {
       newSocket.close();
@@ -278,14 +316,31 @@ function Orders({ user, onLogout }) {
       }
     } catch (error) {
       console.error('Error updating order:', error);
+      alert('Failed to update order status');
     } finally {
       setUpdatingOrder(null);
     }
   };
 
   const playNotificationSound = () => {
-    const audio = new Audio('/notification.mp3');
-    audio.play().catch(e => console.log('Sound play failed:', e));
+    try {
+      const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuFz/LTgjMGHm7A7+OZURE');
+      audio.play().catch(e => console.log('Sound play failed:', e));
+    } catch (e) {
+      console.log('Audio error:', e);
+    }
+  };
+
+  const showNotification = (title, body) => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, {
+        body: body,
+        icon: '/favicon.ico',
+        badge: '/favicon.ico',
+        tag: 'order-notification',
+        requireInteraction: false,
+      });
+    }
   };
 
   const getStatusColor = (status) => {
@@ -357,7 +412,7 @@ function Orders({ user, onLogout }) {
         borderRadius: '8px',
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
       }}>
-        <h1 style={{ margin: 0, fontSize: '24px' }}>Orders</h1>
+        <h1 style={{ margin: 0, fontSize: '24px' }}>Orders Dashboard</h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
           <span style={{ fontSize: '14px', color: '#666' }}>
             Welcome, <strong>{user.name}</strong>
@@ -367,13 +422,14 @@ function Orders({ user, onLogout }) {
           </span>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span style={{
-              width: '8px',
-              height: '8px',
+              width: '10px',
+              height: '10px',
               borderRadius: '50%',
-              backgroundColor: socket?.connected ? '#4caf50' : '#ccc'
+              backgroundColor: connected ? '#4caf50' : '#f44336',
+              animation: connected ? 'pulse 2s infinite' : 'none'
             }}></span>
-            <span style={{ fontSize: '13px', color: '#666' }}>
-              {socket?.connected ? 'Live' : 'Offline'}
+            <span style={{ fontSize: '13px', color: '#666', fontWeight: '500' }}>
+              {connected ? 'Live' : 'Offline'}
             </span>
           </div>
           <button
@@ -385,7 +441,8 @@ function Orders({ user, onLogout }) {
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
-              fontSize: '14px'
+              fontSize: '14px',
+              fontWeight: '500'
             }}
           >
             Logout
@@ -527,14 +584,14 @@ function Orders({ user, onLogout }) {
               backgroundColor: '#f8f9fa',
               borderBottom: '2px solid #dee2e6'
             }}>
-              <th style={{ padding: '12px 16px', textAlign: 'left' }}>Order ID</th>
-              <th style={{ padding: '12px 16px', textAlign: 'left' }}>Customer</th>
-              <th style={{ padding: '12px 16px', textAlign: 'left' }}>Phone</th>
-              <th style={{ padding: '12px 16px', textAlign: 'left' }}>Address</th>
-              <th style={{ padding: '12px 16px', textAlign: 'left' }}>Items</th>
-              <th style={{ padding: '12px 16px', textAlign: 'right' }}>Total</th>
-              <th style={{ padding: '12px 16px', textAlign: 'center' }}>Status</th>
-              <th style={{ padding: '12px 16px', textAlign: 'left' }}>Handled By</th>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Order ID</th>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Customer</th>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Phone</th>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Address</th>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Items</th>
+              <th style={{ padding: '12px 16px', textAlign: 'right', fontWeight: '600' }}>Total</th>
+              <th style={{ padding: '12px 16px', textAlign: 'center', fontWeight: '600' }}>Status</th>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Handled By</th>
             </tr>
           </thead>
           <tbody>
@@ -543,7 +600,8 @@ function Orders({ user, onLogout }) {
                 <td colSpan="8" style={{
                   padding: '40px',
                   textAlign: 'center',
-                  color: '#999'
+                  color: '#999',
+                  fontSize: '16px'
                 }}>
                   {filterStatus === 'all' ? 'No orders found' : `No ${getStatusLabel(filterStatus).toLowerCase()} orders`}
                 </td>
@@ -551,7 +609,8 @@ function Orders({ user, onLogout }) {
             ) : (
               filteredOrders.map((order) => (
                 <tr key={order._id} style={{
-                  borderBottom: '1px solid #e9ecef'
+                  borderBottom: '1px solid #e9ecef',
+                  transition: 'background-color 0.2s'
                 }}>
                   <td style={{ padding: '12px 16px', color: '#1976d2', fontWeight: '500' }}>
                     {order.order_number}
@@ -567,7 +626,7 @@ function Orders({ user, onLogout }) {
                   </td>
                   <td style={{ padding: '12px 16px', fontSize: '13px' }}>
                     {order.line_items?.map((item, idx) => (
-                      <div key={idx}>
+                      <div key={idx} style={{ padding: '2px 0' }}>
                         {item.quantity}x {item.title}
                       </div>
                     ))}
@@ -603,7 +662,8 @@ function Orders({ user, onLogout }) {
                               border: '1px solid #ddd',
                               borderRadius: '3px',
                               cursor: updatingOrder === order._id || order.status === status ? 'not-allowed' : 'pointer',
-                              opacity: order.status === status ? 0.6 : 1
+                              opacity: order.status === status ? 0.6 : 1,
+                              fontWeight: '500'
                             }}
                           >
                             {status === 'in_progress' ? 'In Progress' : 
@@ -631,6 +691,13 @@ function Orders({ user, onLogout }) {
           </tbody>
         </table>
       </div>
+
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+      `}</style>
     </div>
   );
 }
