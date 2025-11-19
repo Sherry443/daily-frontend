@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 
-const BACKEND_URL = 'https://daily-backend-zeta.vercel.app/';
+const BACKEND_URL = 'https://daily-backend-riders.onrender.com';
 
 // Login Component
 function Login({ onLogin }) {
