@@ -459,294 +459,297 @@ function Orders({ user, onLogout }) {
   }
 
   return (
-    <div style={{
-      fontFamily: 'Arial, sans-serif',
-      padding: '20px',
-      backgroundColor: '#f5f5f5',
-      minHeight: '100vh'
-    }}>
-      {/* Header */}
-      <div style={{
-        backgroundColor: 'white',
-        padding: '16px 20px',
-        marginBottom: '20px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        borderRadius: '8px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-      }}>
-        <h1 style={{ margin: 0, fontSize: '24px' }}>Orders Dashboard</h1>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <span style={{ fontSize: '14px', color: '#666' }}>
-            Welcome, <strong>{user.name}</strong>
-          </span>
-          <span style={{ fontSize: '14px', color: '#666' }}>
-            {filteredOrders.length} orders
-          </span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{
-              width: '10px',
-              height: '10px',
-              borderRadius: '50%',
-              backgroundColor: connected ? '#4caf50' : '#f44336',
-              animation: connected ? 'pulse 2s infinite' : 'none'
-            }}></span>
-            <span style={{ fontSize: '13px', color: '#666', fontWeight: '500' }}>
-              {connected ? 'Live' : reconnectAttempts > 0 ? `Reconnecting (${reconnectAttempts})` : 'Offline'}
+    <div className="font-sans bg-gray-100 min-h-screen p-4">
+
+      {/* ==== HEADER BAR ==== */}
+      <div className="bg-white p-4 mb-4 rounded-xl shadow-md flex justify-between items-center">
+        <div>
+          <h1 className="text-xl font-bold">Orders Dashboard</h1>
+          <p className="text-sm text-gray-600">
+            Welcome, <span className="font-semibold">{user.name}</span>
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+
+          {/* LIVE indicator */}
+          <div className="flex items-center gap-1">
+            <span
+              className={`w-3 h-3 rounded-full ${
+                connected ? "bg-green-500 animate-pulse" : "bg-red-500"
+              }`}
+            ></span>
+            <span className="text-xs text-gray-600 font-medium">
+              {connected
+                ? "Live"
+                : reconnectAttempts > 0
+                ? `Reconnecting (${reconnectAttempts})`
+                : "Offline"}
             </span>
           </div>
+
+          {/* Profile Circle */}
+          <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold shadow">
+            {user.name.charAt(0)}
+          </div>
+
+          {/* Logout */}
           <button
             onClick={onLogout}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#f44336',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: '500'
-            }}
+            className="bg-red-500 text-white px-3 py-2 rounded-lg text-sm flex items-center gap-1 shadow hover:bg-red-600"
           >
-            Logout
+            <FiLogOut /> Logout
+          </button>
+
+          {/* Filter Button (Mobile) */}
+          <button
+            className="lg:hidden bg-gray-200 p-2 rounded-full"
+            onClick={() => setShowFilters(true)}
+          >
+            <FiFilter size={18} />
           </button>
         </div>
       </div>
 
-      {/* Date Filter Section */}
-      <div style={{
-        backgroundColor: 'white',
-        padding: '16px 20px',
-        marginBottom: '20px',
-        borderRadius: '8px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '14px', fontWeight: '500', color: '#333' }}>
-           Select Date:
-          </span>
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      {/* ==== FILTER DRAWER (Mobile) ==== */}
+      {showFilters && (
+        <div className="fixed inset-0 bg-black/40 z-30" onClick={() => setShowFilters(false)}></div>
+      )}
+
+      <div
+        className={`fixed top-0 right-0 h-full w-72 bg-white shadow-xl p-5 z-40 transform transition-transform duration-300 
+          ${showFilters ? "translate-x-0" : "translate-x-full"}`}
+      >
+        <div className="flex justify-between items-center mb-5">
+          <h2 className="text-lg font-semibold">Filters</h2>
+          <button onClick={() => setShowFilters(false)}>
+            <FiX size={22} />
+          </button>
+        </div>
+
+        {/* Date Filter */}
+        <div className="mb-6">
+          <h3 className="font-semibold text-sm mb-2">Select Date</h3>
+
+          <div className="flex flex-col gap-3">
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              style={{
-                padding: '8px 12px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '14px',
-                fontFamily: 'Arial, sans-serif'
-              }}
+              className="border p-2 rounded-lg text-sm"
             />
-            <span style={{ color: '#999' }}>TO</span>
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              style={{
-                padding: '8px 12px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '14px',
-                fontFamily: 'Arial, sans-serif'
-              }}
+              className="border p-2 rounded-lg text-sm"
             />
+
+            {(startDate || endDate) && (
+              <button
+                onClick={resetDateFilter}
+                className="bg-yellow-500 text-white p-2 rounded-lg text-sm"
+              >
+                Clear Dates
+              </button>
+            )}
           </div>
+        </div>
+
+        {/* Status Filter */}
+        <div>
+          <h3 className="font-semibold text-sm mb-2">Order Status</h3>
+          <div className="flex flex-wrap gap-2">
+            {["all", "pending", "in_progress", "delivered", "cancelled", "rescheduled"].map(
+              (status) => (
+                <button
+                  key={status}
+                  onClick={() => setFilterStatus(status)}
+                  className={`px-3 py-1 text-sm rounded-full border ${
+                    filterStatus === status
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-100 text-gray-700"
+                  }`}
+                >
+                  {getStatusLabel(status)} ({getCountByStatus(status)})
+                </button>
+              )
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ==== DESKTOP FILTERS (Visible Only on Large Screens) ==== */}
+      <div className="hidden lg:block bg-white p-4 mb-4 rounded-xl shadow-md">
+
+        {/* Date Filter */}
+        <div className="flex items-center gap-4 mb-3">
+          <span className="font-medium text-sm">Select Date:</span>
+          <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}
+            className="border p-2 rounded-lg text-sm" />
+
+          <span>to</span>
+
+          <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)}
+            className="border p-2 rounded-lg text-sm" />
 
           {(startDate || endDate) && (
-            <button
-              onClick={resetDateFilter}
-              style={{
-                padding: '8px 12px',
-                backgroundColor: '#ff9800',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '13px',
-                fontWeight: '500'
-              }}
-            >
-              ✕ Clear Dates
+            <button onClick={resetDateFilter} className="bg-yellow-500 text-white px-4 py-2 rounded-lg">
+              Clear
             </button>
+          )}
+        </div>
+
+        {/* Status filter */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {["all", "pending", "in_progress", "delivered", "cancelled", "rescheduled"].map(
+            (status) => (
+              <button
+                key={status}
+                onClick={() => setFilterStatus(status)}
+                className={`px-4 py-2 rounded-full text-sm ${
+                  filterStatus === status
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 text-gray-700"
+                }`}
+              >
+                {getStatusLabel(status)} ({getCountByStatus(status)})
+              </button>
+            )
           )}
         </div>
       </div>
 
-      {/* Status Filter Section */}
-      <div style={{
-        backgroundColor: 'white',
-        padding: '16px 20px',
-        marginBottom: '20px',
-        borderRadius: '8px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '14px', fontWeight: '500', color: '#333' }}>
-            Filter by Status:
-          </span>
-          
-          {['all', 'pending', 'in_progress', 'delivered', 'cancelled', 'rescheduled'].map((status) => (
-            <button
-              key={status}
-              onClick={() => setFilterStatus(status)}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: filterStatus === status ? getStatusColor(status) : '#f0f0f0',
-                color: filterStatus === status ? 'white' : '#333',
-                border: '1px solid #ddd',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontSize: '13px',
-                fontWeight: '500',
-                transition: 'all 0.2s'
-              }}
-            >
-              {status === 'all' ? 'All' : getStatusLabel(status)} ({getCountByStatus(status)})
-            </button>
-          ))}
+      {/* ==== ORDERS LIST ==== */}
+      <div className="lg:block hidden">
+        {/* Desktop Table */}
+        <div className="bg-white rounded-xl overflow-auto shadow-md">
+          <table className="w-full min-w-[1000px] border-collapse">
+            <thead className="bg-gray-50 border-b">
+              <tr>
+                <th className="p-4 text-left font-semibold">Order ID</th>
+                <th className="p-4 text-left font-semibold">Date</th>
+                <th className="p-4 text-left font-semibold">Customer</th>
+                <th className="p-4 text-left font-semibold">Phone</th>
+                <th className="p-4 text-left font-semibold">Address</th>
+                <th className="p-4 text-left font-semibold">Items</th>
+                <th className="p-4 text-right font-semibold">Total</th>
+                <th className="p-4 text-center font-semibold">Status</th>
+                <th className="p-4 text-left font-semibold">Handled By</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {filteredOrders.length === 0 ? (
+                <tr>
+                  <td colSpan="9" className="p-10 text-center text-gray-500">
+                    No orders found.
+                  </td>
+                </tr>
+              ) : (
+                filteredOrders.map((order) => (
+                  <tr key={order._id} className="border-b">
+                    <td className="p-4 text-blue-600 font-medium">{order.order_number}</td>
+                    <td className="p-4">{getOrderDate(order)}</td>
+                    <td className="p-4">{order.customer_full_name}</td>
+                    <td className="p-4">{order.customer_phone}</td>
+                    <td className="p-4 max-w-xs">{order.full_address}</td>
+                    <td className="p-4 text-sm">
+                      {order.line_items?.map((item, idx) => (
+                        <div key={idx}>{item.quantity}x {item.title}</div>
+                      ))}
+                    </td>
+                    <td className="p-4 text-right font-bold">Rs {order.total}</td>
+                    <td className="p-4 text-center">
+                      <span
+                        className="px-3 py-1 text-white rounded text-sm"
+                        style={{ backgroundColor: getStatusColor(order.status) }}
+                      >
+                        {getStatusLabel(order.status)}
+                      </span>
+                    </td>
+
+                    <td className="p-4 text-sm">
+                      {order.handled_by?.name ? (
+                        <>
+                          <div className="font-medium">{order.handled_by.name}</div>
+                          <div className="text-xs text-gray-600">
+                            {new Date(order.handled_by.updated_at).toLocaleString("en-PK")}
+                          </div>
+                        </>
+                      ) : (
+                        <span className="text-gray-400">—</span>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
 
-      {/* Table */}
-      <div style={{
-        backgroundColor: 'white',
-        borderRadius: '8px',
-        overflow: 'auto',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-      }}>
-        <table style={{
-          width: '100%',
-          borderCollapse: 'collapse',
-          minWidth: '1200px'
-        }}>
-          <thead>
-            <tr style={{
-              backgroundColor: '#f8f9fa',
-              borderBottom: '2px solid #dee2e6'
-            }}>
-              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Order ID</th>
-              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Date</th>
-              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Customer</th>
-              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Phone</th>
-              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Address</th>
-              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Items</th>
-              <th style={{ padding: '12px 16px', textAlign: 'right', fontWeight: '600' }}>Total</th>
-              <th style={{ padding: '12px 16px', textAlign: 'center', fontWeight: '600' }}>Status</th>
-              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Handled By</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredOrders.length === 0 ? (
-              <tr>
-                <td colSpan="9" style={{
-                  padding: '40px',
-                  textAlign: 'center',
-                  color: '#999',
-                  fontSize: '16px'
-                }}>
-                  {filterStatus === 'all' && !startDate && !endDate 
-                    ? 'No orders found' 
-                    : `No orders found for selected filters`}
-                </td>
-              </tr>
-            ) : (
-              filteredOrders.map((order) => (
-                <tr key={order._id} style={{
-                  borderBottom: '1px solid #e9ecef',
-                  transition: 'background-color 0.2s'
-                }}>
-                  <td style={{ padding: '12px 16px', color: '#1976d2', fontWeight: '500' }}>
-                    {order.order_number}
-                  </td>
-                  <td style={{ padding: '12px 16px', fontSize: '13px' }}>
-                    {getOrderDate(order)}
-                  </td>
-                  <td style={{ padding: '12px 16px' }}>
-                    {order.customer_full_name}
-                  </td>
-                  <td style={{ padding: '12px 16px' }}>
-                    {order.customer_phone}
-                  </td>
-                  <td style={{ padding: '12px 16px', maxWidth: '250px', fontSize: '13px' }}>
-                    {order.full_address}
-                  </td>
-                  <td style={{ padding: '12px 16px', fontSize: '13px' }}>
-                    {order.line_items?.map((item, idx) => (
-                      <div key={idx} style={{ padding: '2px 0' }}>
-                        {item.quantity}x {item.title}
-                      </div>
-                    ))}
-                  </td>
-                  <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: '500' }}>
-                    {order.total}
-                  </td>
-                  <td style={{ padding: '12px 16px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                      <div style={{
-                        display: 'inline-block',
-                        padding: '4px 8px',
-                        backgroundColor: getStatusColor(order.status),
-                        color: 'white',
-                        borderRadius: '4px',
-                        fontSize: '12px',
-                        fontWeight: '500',
-                        textAlign: 'center',
-                        marginBottom: '8px'
-                      }}>
-                        {getStatusLabel(order.status)}
-                      </div>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                        {['delivered', 'in_progress', 'cancelled', 'rescheduled'].map((status) => (
-                          <button
-                            key={status}
-                            onClick={() => updateOrderStatus(order._id, status)}
-                            disabled={updatingOrder === order._id || order.status === status}
-                            style={{
-                              padding: '4px 8px',
-                              fontSize: '11px',
-                              backgroundColor: order.status === status ? '#ddd' : '#f0f0f0',
-                              border: '1px solid #ddd',
-                              borderRadius: '3px',
-                              cursor: updatingOrder === order._id || order.status === status ? 'not-allowed' : 'pointer',
-                              opacity: order.status === status ? 0.6 : 1,
-                              fontWeight: '500'
-                            }}
-                          >
-                            {status === 'in_progress' ? 'In Progress' : 
-                             status.charAt(0).toUpperCase() + status.slice(1)}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </td>
-                  <td style={{ padding: '12px 16px', fontSize: '13px' }}>
-                    {order.handled_by?.name ? (
-                      <div>
-                        <div style={{ fontWeight: '500' }}>{order.handled_by.name}</div>
-                        <div style={{ fontSize: '11px', color: '#666' }}>
-                          {new Date(order.handled_by.updated_at).toLocaleString('en-PK')}
-                        </div>
-                      </div>
-                    ) : (
-                      <span style={{ color: '#999' }}>—</span>
-                    )}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      {/* ==== MOBILE ORDER CARDS ==== */}
+      <div className="lg:hidden">
+        {filteredOrders.length === 0 ? (
+          <p className="text-center text-gray-500 p-10">No orders found.</p>
+        ) : (
+          filteredOrders.map((order) => (
+            <div
+              key={order._id}
+              className="bg-white p-4 rounded-xl shadow-md mb-4"
+            >
+              <div className="flex justify-between items-center">
+                <p className="text-blue-600 font-semibold">{order.order_number}</p>
+                <span
+                  className="px-3 py-1 text-white text-xs rounded-lg"
+                  style={{ backgroundColor: getStatusColor(order.status) }}
+                >
+                  {getStatusLabel(order.status)}
+                </span>
+              </div>
 
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-      `}</style>
+              <p className="text-xs text-gray-500 mt-1">{getOrderDate(order)}</p>
+
+              <div className="mt-3 text-sm">
+                <p><strong>{order.customer_full_name}</strong></p>
+                <p>{order.customer_phone}</p>
+                <p className="text-gray-600">{order.full_address}</p>
+              </div>
+
+              <div className="mt-3 text-sm">
+                {order.line_items?.map((item, idx) => (
+                  <div key={idx}>
+                    {item.quantity}x {item.title}
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-4 font-bold text-right text-lg">
+                Rs {order.total}
+              </div>
+
+              {/* Status Buttons */}
+              <div className="mt-4 flex flex-wrap gap-2">
+                {["delivered", "in_progress", "cancelled", "rescheduled"].map((status) => (
+                  <button
+                    key={status}
+                    onClick={() => updateOrderStatus(order._id, status)}
+                    disabled={updatingOrder === order._id || order.status === status}
+                    className={`px-3 py-1 rounded text-xs border ${
+                      order.status === status
+                        ? "bg-gray-300 text-gray-600"
+                        : "bg-gray-100 text-gray-700"
+                    }`}
+                  >
+                    {getStatusLabel(status)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 }
