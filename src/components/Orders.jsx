@@ -39,7 +39,8 @@ function Login({ onLogin }) {
         setError(data.error || 'Something went wrong');
       }
     } catch (err) {
-      setError('Connection error. Please check if server is running.');
+      console.error('Connection error:', err);
+      setError(`Connection error: ${err.message}. Please check if server is running at ${BACKEND_URL}`);
     } finally {
       setLoading(false);
     }
@@ -337,7 +338,6 @@ function Orders({ user, onLogout }) {
       });
 
       console.log('📡 Response status:', response.status);
-      console.log('📡 Response headers:', Object.fromEntries(response.headers.entries()));
 
       if (response.ok) {
         const updatedOrder = await response.json();
