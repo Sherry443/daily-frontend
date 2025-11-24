@@ -524,7 +524,7 @@ function Orders({ user, onLogout }) {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
           <span style={{ fontSize: '14px', fontWeight: '500', color: '#333' }}>
-            📅 Date Range:
+           Select Date:
           </span>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -540,7 +540,7 @@ function Orders({ user, onLogout }) {
                 fontFamily: 'Arial, sans-serif'
               }}
             />
-            <span style={{ color: '#999' }}>سے</span>
+            <span style={{ color: '#999' }}>TO</span>
             <input
               type="date"
               value={endDate}
