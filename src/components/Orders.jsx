@@ -3,7 +3,6 @@ import io from 'socket.io-client';
 
 const BACKEND_URL = 'https://daily-backend-r2zx.onrender.com';
 
-// Login Component
 function Login({ onLogin }) {
   const [isRegistering, setIsRegistering] = useState(false);
   const [formData, setFormData] = useState({
@@ -192,24 +191,23 @@ function Login({ onLogin }) {
   );
 }
 
-// Orders Component
 function Orders({ user, onLogout }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updatingOrder, setUpdatingOrder] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [connected, setConnected] = useState(false);
   const [reconnectAttempts, setReconnectAttempts] = useState(0);
   
   const socketRef = useRef(null);
 
   useEffect(() => {
-    // Request notification permission
     if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission();
     }
 
-    // Initialize Socket.IO with better reconnection
     const newSocket = io(BACKEND_URL, {
       transports: ['websocket', 'polling'],
       reconnection: true,
@@ -226,7 +224,6 @@ function Orders({ user, onLogout }) {
       console.log('✅ Connected to Socket.IO server. Socket ID:', newSocket.id);
       setConnected(true);
       setReconnectAttempts(0);
-      // Request initial orders
       newSocket.emit('get_orders');
     });
 
@@ -248,7 +245,6 @@ function Orders({ user, onLogout }) {
       console.log(`✅ Reconnected after ${attemptNumber} attempts`);
       setConnected(true);
       setReconnectAttempts(0);
-      // Request orders again after reconnection
       newSocket.emit('get_orders');
     });
 
@@ -257,18 +253,15 @@ function Orders({ user, onLogout }) {
       setConnected(false);
     });
 
-    // Listen for initial orders list
     newSocket.on('orders_list', (ordersData) => {
       console.log('📦 Received orders list:', ordersData.length);
       setOrders(ordersData);
       setLoading(false);
     });
 
-    // Listen for new orders (real-time)
     newSocket.on('new_order', (newOrder) => {
       console.log('🔔 NEW ORDER received:', newOrder.order_number);
       setOrders(prevOrders => {
-        // Check if order already exists
         const exists = prevOrders.some(o => o._id === newOrder._id);
         if (exists) {
           console.log('⚠️ Order already in list, skipping');
@@ -280,7 +273,6 @@ function Orders({ user, onLogout }) {
       showNotification('New Order!', `Order ${newOrder.order_number} from ${newOrder.customer_full_name}`);
     });
 
-    // Listen for order updates (status changes)
     newSocket.on('order_updated', (updatedOrder) => {
       console.log('🔄 ORDER UPDATED:', updatedOrder.order_number);
       setOrders(prevOrders => 
@@ -294,10 +286,8 @@ function Orders({ user, onLogout }) {
       console.error('❌ Socket error:', error);
     });
 
-    // Fallback: Also fetch via API
     fetchOrders();
 
-    // Cleanup on unmount
     return () => {
       console.log('🔌 Cleaning up socket connection');
       newSocket.close();
@@ -360,7 +350,7 @@ function Orders({ user, onLogout }) {
 
   const playNotificationSound = () => {
     try {
-      const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuFz/LTgjMGHm7A7+OZURE');
+      const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuFz/LTgjMGHm7A7+OZURU');
       audio.play().catch(e => console.log('Sound play failed:', e));
     } catch (e) {
       console.log('Audio error:', e);
@@ -401,19 +391,57 @@ function Orders({ user, onLogout }) {
     return labels[status] || status;
   };
 
-  // Filter orders based on selected status
-  const filteredOrders = filterStatus === 'all' 
-    ? orders 
-    : orders.filter(order => order.status === filterStatus);
+  // Extract date from order
+  const getOrderDate = (order) => {
+    if (order.created_at) {
+      return new Date(order.created_at).toISOString().split('T')[0];
+    }
+    return '';
+  };
 
-  // Count orders by status
-  const orderCounts = {
-    all: orders.length,
-    pending: orders.filter(o => o.status === 'pending').length,
-    in_progress: orders.filter(o => o.status === 'in_progress').length,
-    delivered: orders.filter(o => o.status === 'delivered').length,
-    cancelled: orders.filter(o => o.status === 'cancelled').length,
-    rescheduled: orders.filter(o => o.status === 'rescheduled').length,
+  // Filter orders based on status and date range
+  const filteredOrders = orders.filter(order => {
+    const statusMatch = filterStatus === 'all' || order.status === filterStatus;
+    
+    let dateMatch = true;
+    if (startDate || endDate) {
+      const orderDate = getOrderDate(order);
+      if (startDate && endDate) {
+        dateMatch = orderDate >= startDate && orderDate <= endDate;
+      } else if (startDate) {
+        dateMatch = orderDate >= startDate;
+      } else if (endDate) {
+        dateMatch = orderDate <= endDate;
+      }
+    }
+    
+    return statusMatch && dateMatch;
+  });
+
+  // Count orders by status (considering date filter)
+  const getCountByStatus = (status) => {
+    return orders.filter(o => {
+      const statusMatch = status === 'all' || o.status === status;
+      
+      let dateMatch = true;
+      if (startDate || endDate) {
+        const orderDate = getOrderDate(o);
+        if (startDate && endDate) {
+          dateMatch = orderDate >= startDate && orderDate <= endDate;
+        } else if (startDate) {
+          dateMatch = orderDate >= startDate;
+        } else if (endDate) {
+          dateMatch = orderDate <= endDate;
+        }
+      }
+      
+      return statusMatch && dateMatch;
+    }).length;
+  };
+
+  const resetDateFilter = () => {
+    setStartDate('');
+    setEndDate('');
   };
 
   if (loading) {
@@ -486,7 +514,68 @@ function Orders({ user, onLogout }) {
         </div>
       </div>
 
-      {/* Filter Section */}
+      {/* Date Filter Section */}
+      <div style={{
+        backgroundColor: 'white',
+        padding: '16px 20px',
+        marginBottom: '20px',
+        borderRadius: '8px',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '14px', fontWeight: '500', color: '#333' }}>
+            📅 Date Range:
+          </span>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              style={{
+                padding: '8px 12px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '14px',
+                fontFamily: 'Arial, sans-serif'
+              }}
+            />
+            <span style={{ color: '#999' }}>سے</span>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              style={{
+                padding: '8px 12px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '14px',
+                fontFamily: 'Arial, sans-serif'
+              }}
+            />
+          </div>
+
+          {(startDate || endDate) && (
+            <button
+              onClick={resetDateFilter}
+              style={{
+                padding: '8px 12px',
+                backgroundColor: '#ff9800',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: '500'
+              }}
+            >
+              ✕ Clear Dates
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Status Filter Section */}
       <div style={{
         backgroundColor: 'white',
         padding: '16px 20px',
@@ -515,7 +604,7 @@ function Orders({ user, onLogout }) {
                 transition: 'all 0.2s'
               }}
             >
-              {status === 'all' ? 'All' : getStatusLabel(status)} ({orderCounts[status]})
+              {status === 'all' ? 'All' : getStatusLabel(status)} ({getCountByStatus(status)})
             </button>
           ))}
         </div>
@@ -539,6 +628,7 @@ function Orders({ user, onLogout }) {
               borderBottom: '2px solid #dee2e6'
             }}>
               <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Order ID</th>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Date</th>
               <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Customer</th>
               <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Phone</th>
               <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Address</th>
@@ -551,13 +641,15 @@ function Orders({ user, onLogout }) {
           <tbody>
             {filteredOrders.length === 0 ? (
               <tr>
-                <td colSpan="8" style={{
+                <td colSpan="9" style={{
                   padding: '40px',
                   textAlign: 'center',
                   color: '#999',
                   fontSize: '16px'
                 }}>
-                  {filterStatus === 'all' ? 'No orders found' : `No ${getStatusLabel(filterStatus).toLowerCase()} orders`}
+                  {filterStatus === 'all' && !startDate && !endDate 
+                    ? 'No orders found' 
+                    : `No orders found for selected filters`}
                 </td>
               </tr>
             ) : (
@@ -568,6 +660,9 @@ function Orders({ user, onLogout }) {
                 }}>
                   <td style={{ padding: '12px 16px', color: '#1976d2', fontWeight: '500' }}>
                     {order.order_number}
+                  </td>
+                  <td style={{ padding: '12px 16px', fontSize: '13px' }}>
+                    {getOrderDate(order)}
                   </td>
                   <td style={{ padding: '12px 16px' }}>
                     {order.customer_full_name}
@@ -656,7 +751,6 @@ function Orders({ user, onLogout }) {
   );
 }
 
-// Main App Component
 export default function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
