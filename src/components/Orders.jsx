@@ -52,135 +52,71 @@ function Login({ onLogin }) {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: '#f5f5f5',
-      fontFamily: 'Arial, sans-serif'
-    }}>
-      <div style={{
-        backgroundColor: 'white',
-        padding: '40px',
-        borderRadius: '8px',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-        width: '100%',
-        maxWidth: '400px'
-      }}>
-        <h2 style={{ marginTop: 0, marginBottom: '24px', textAlign: 'center' }}>
+    <div className="login-container">
+      <div className="login-card">
+        <h2 className="login-title">
           {isRegistering ? 'Create Account' : 'Login'}
         </h2>
 
         {error && (
-          <div style={{
-            backgroundColor: '#fee',
-            color: '#c33',
-            padding: '12px',
-            borderRadius: '4px',
-            marginBottom: '16px',
-            fontSize: '14px'
-          }}>
+          <div className="error-message">
             {error}
           </div>
         )}
 
         <div>
           {isRegistering && (
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
-                Name
-              </label>
+            <div className="form-group">
+              <label className="form-label">Name</label>
               <input
                 type="text"
+                className="form-input"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 onKeyPress={handleKeyPress}
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  fontSize: '14px',
-                  boxSizing: 'border-box'
-                }}
               />
             </div>
           )}
 
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
-              Email
-            </label>
+          <div className="form-group">
+            <label className="form-label">Email</label>
             <input
               type="email"
+              className="form-input"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               onKeyPress={handleKeyPress}
-              style={{
-                width: '100%',
-                padding: '10px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '14px',
-                boxSizing: 'border-box'
-              }}
             />
           </div>
 
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
-              Password
-            </label>
+          <div className="form-group">
+            <label className="form-label">Password</label>
             <input
               type="password"
+              className="form-input"
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               onKeyPress={handleKeyPress}
-              style={{
-                width: '100%',
-                padding: '10px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '14px',
-                boxSizing: 'border-box'
-              }}
             />
           </div>
 
           <button
+            className="submit-button"
             onClick={handleSubmit}
             disabled={loading}
-            style={{
-              width: '100%',
-              padding: '12px',
-              backgroundColor: loading ? '#ccc' : '#1976d2',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              fontSize: '16px',
-              fontWeight: '500',
-              cursor: loading ? 'not-allowed' : 'pointer'
-            }}
           >
             {loading ? 'Please wait...' : (isRegistering ? 'Register' : 'Login')}
           </button>
         </div>
 
-        <div style={{ marginTop: '16px', textAlign: 'center', fontSize: '14px' }}>
+        <div className="toggle-auth">
           {isRegistering ? 'Already have an account?' : "Don't have an account?"}
           {' '}
           <button
+            className="toggle-auth-button"
             onClick={() => {
               setIsRegistering(!isRegistering);
               setError('');
-            }}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#1976d2',
-              cursor: 'pointer',
-              textDecoration: 'underline'
             }}
           >
             {isRegistering ? 'Login' : 'Register'}
@@ -391,7 +327,6 @@ function Orders({ user, onLogout }) {
     return labels[status] || status;
   };
 
-  // Extract date from order
   const getOrderDate = (order) => {
     if (order.created_at) {
       return new Date(order.created_at).toISOString().split('T')[0];
@@ -399,7 +334,6 @@ function Orders({ user, onLogout }) {
     return '';
   };
 
-  // Filter orders based on status and date range
   const filteredOrders = orders.filter(order => {
     const statusMatch = filterStatus === 'all' || order.status === filterStatus;
     
@@ -418,7 +352,6 @@ function Orders({ user, onLogout }) {
     return statusMatch && dateMatch;
   });
 
-  // Count orders by status (considering date filter)
   const getCountByStatus = (status) => {
     return orders.filter(o => {
       const statusMatch = status === 'all' || o.status === status;
@@ -446,309 +379,175 @@ function Orders({ user, onLogout }) {
 
   if (loading) {
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        fontFamily: 'Arial, sans-serif'
-      }}>
+      <div className="loading-container">
         <div>Loading orders...</div>
       </div>
     );
   }
 
   return (
-    <div className="font-sans bg-gray-100 min-h-screen p-4">
-
-      {/* ==== HEADER BAR ==== */}
-      <div className="bg-white p-4 mb-4 rounded-xl shadow-md flex justify-between items-center">
-        <div>
-          <h1 className="text-xl font-bold">Orders Dashboard</h1>
-          <p className="text-sm text-gray-600">
-            Welcome, <span className="font-semibold">{user.name}</span>
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-
-          {/* LIVE indicator */}
-          <div className="flex items-center gap-1">
-            <span
-              className={`w-3 h-3 rounded-full ${
-                connected ? "bg-green-500 animate-pulse" : "bg-red-500"
-              }`}
-            ></span>
-            <span className="text-xs text-gray-600 font-medium">
-              {connected
-                ? "Live"
-                : reconnectAttempts > 0
-                ? `Reconnecting (${reconnectAttempts})`
-                : "Offline"}
+    <div className="orders-container">
+      {/* Header */}
+      <div className="header-card">
+        <h1 className="header-title">Orders Dashboard</h1>
+        <div className="header-actions">
+          <span className="header-info">
+            Welcome, <strong>{user.name}</strong>
+          </span>
+          <span className="header-info">
+            {filteredOrders.length} orders
+          </span>
+          <div className="connection-status">
+            <span className={`status-dot ${connected ? 'connected' : ''}`}></span>
+            <span className="status-text">
+              {connected ? 'Live' : reconnectAttempts > 0 ? `Reconnecting (${reconnectAttempts})` : 'Offline'}
             </span>
           </div>
-
-          {/* Profile Circle */}
-          <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold shadow">
-            {user.name.charAt(0)}
-          </div>
-
-          {/* Logout */}
-          <button
-            onClick={onLogout}
-            className="bg-red-500 text-white px-3 py-2 rounded-lg text-sm flex items-center gap-1 shadow hover:bg-red-600"
-          >
-            <FiLogOut /> Logout
-          </button>
-
-          {/* Filter Button (Mobile) */}
-          <button
-            className="lg:hidden bg-gray-200 p-2 rounded-full"
-            onClick={() => setShowFilters(true)}
-          >
-            <FiFilter size={18} />
+          <button className="logout-button" onClick={onLogout}>
+            Logout
           </button>
         </div>
       </div>
 
-      {/* ==== FILTER DRAWER (Mobile) ==== */}
-      {showFilters && (
-        <div className="fixed inset-0 bg-black/40 z-30" onClick={() => setShowFilters(false)}></div>
-      )}
-
-      <div
-        className={`fixed top-0 right-0 h-full w-72 bg-white shadow-xl p-5 z-40 transform transition-transform duration-300 
-          ${showFilters ? "translate-x-0" : "translate-x-full"}`}
-      >
-        <div className="flex justify-between items-center mb-5">
-          <h2 className="text-lg font-semibold">Filters</h2>
-          <button onClick={() => setShowFilters(false)}>
-            <FiX size={22} />
-          </button>
-        </div>
-
-        {/* Date Filter */}
-        <div className="mb-6">
-          <h3 className="font-semibold text-sm mb-2">Select Date</h3>
-
-          <div className="flex flex-col gap-3">
+      {/* Date Filter Section */}
+      <div className="filter-card">
+        <div className="filter-container">
+          <span className="filter-label">Select Date:</span>
+          
+          <div className="date-filter-group">
             <input
               type="date"
+              className="date-input"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="border p-2 rounded-lg text-sm"
             />
+            <span className="date-separator">TO</span>
             <input
               type="date"
+              className="date-input"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="border p-2 rounded-lg text-sm"
             />
-
-            {(startDate || endDate) && (
-              <button
-                onClick={resetDateFilter}
-                className="bg-yellow-500 text-white p-2 rounded-lg text-sm"
-              >
-                Clear Dates
-              </button>
-            )}
           </div>
-        </div>
-
-        {/* Status Filter */}
-        <div>
-          <h3 className="font-semibold text-sm mb-2">Order Status</h3>
-          <div className="flex flex-wrap gap-2">
-            {["all", "pending", "in_progress", "delivered", "cancelled", "rescheduled"].map(
-              (status) => (
-                <button
-                  key={status}
-                  onClick={() => setFilterStatus(status)}
-                  className={`px-3 py-1 text-sm rounded-full border ${
-                    filterStatus === status
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-100 text-gray-700"
-                  }`}
-                >
-                  {getStatusLabel(status)} ({getCountByStatus(status)})
-                </button>
-              )
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* ==== DESKTOP FILTERS (Visible Only on Large Screens) ==== */}
-      <div className="hidden lg:block bg-white p-4 mb-4 rounded-xl shadow-md">
-
-        {/* Date Filter */}
-        <div className="flex items-center gap-4 mb-3">
-          <span className="font-medium text-sm">Select Date:</span>
-          <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}
-            className="border p-2 rounded-lg text-sm" />
-
-          <span>to</span>
-
-          <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)}
-            className="border p-2 rounded-lg text-sm" />
 
           {(startDate || endDate) && (
-            <button onClick={resetDateFilter} className="bg-yellow-500 text-white px-4 py-2 rounded-lg">
-              Clear
+            <button className="clear-button" onClick={resetDateFilter}>
+              ✕ Clear Dates
             </button>
           )}
         </div>
+      </div>
 
-        {/* Status filter */}
-        <div className="flex items-center gap-2 flex-wrap">
-          {["all", "pending", "in_progress", "delivered", "cancelled", "rescheduled"].map(
-            (status) => (
-              <button
-                key={status}
-                onClick={() => setFilterStatus(status)}
-                className={`px-4 py-2 rounded-full text-sm ${
-                  filterStatus === status
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-100 text-gray-700"
-                }`}
-              >
-                {getStatusLabel(status)} ({getCountByStatus(status)})
-              </button>
-            )
-          )}
+      {/* Status Filter Section */}
+      <div className="filter-card">
+        <div className="filter-container">
+          <span className="filter-label">Filter by Status:</span>
+          
+          {['all', 'pending', 'in_progress', 'delivered', 'cancelled', 'rescheduled'].map((status) => (
+            <button
+              key={status}
+              className={`status-filter-button ${filterStatus === status ? 'active' : ''}`}
+              onClick={() => setFilterStatus(status)}
+              style={{
+                backgroundColor: filterStatus === status ? getStatusColor(status) : undefined
+              }}
+            >
+              {status === 'all' ? 'All' : getStatusLabel(status)} ({getCountByStatus(status)})
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* ==== ORDERS LIST ==== */}
-      <div className="lg:block hidden">
-        {/* Desktop Table */}
-        <div className="bg-white rounded-xl overflow-auto shadow-md">
-          <table className="w-full min-w-[1000px] border-collapse">
-            <thead className="bg-gray-50 border-b">
+      {/* Table */}
+      <div className="table-card">
+        <table className="orders-table">
+          <thead className="table-header">
+            <tr>
+              <th>Order ID</th>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>Phone</th>
+              <th>Address</th>
+              <th>Items</th>
+              <th className="align-right">Total</th>
+              <th className="align-center">Status</th>
+              <th>Handled By</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredOrders.length === 0 ? (
               <tr>
-                <th className="p-4 text-left font-semibold">Order ID</th>
-                <th className="p-4 text-left font-semibold">Date</th>
-                <th className="p-4 text-left font-semibold">Customer</th>
-                <th className="p-4 text-left font-semibold">Phone</th>
-                <th className="p-4 text-left font-semibold">Address</th>
-                <th className="p-4 text-left font-semibold">Items</th>
-                <th className="p-4 text-right font-semibold">Total</th>
-                <th className="p-4 text-center font-semibold">Status</th>
-                <th className="p-4 text-left font-semibold">Handled By</th>
+                <td colSpan="9" className="empty-state">
+                  {filterStatus === 'all' && !startDate && !endDate 
+                    ? 'No orders found' 
+                    : `No orders found for selected filters`}
+                </td>
               </tr>
-            </thead>
-
-            <tbody>
-              {filteredOrders.length === 0 ? (
-                <tr>
-                  <td colSpan="9" className="p-10 text-center text-gray-500">
-                    No orders found.
+            ) : (
+              filteredOrders.map((order) => (
+                <tr key={order._id} className="table-row">
+                  <td className="table-cell order-id">
+                    {order.order_number}
+                  </td>
+                  <td className="table-cell date">
+                    {getOrderDate(order)}
+                  </td>
+                  <td className="table-cell">
+                    {order.customer_full_name}
+                  </td>
+                  <td className="table-cell">
+                    {order.customer_phone}
+                  </td>
+                  <td className="table-cell address">
+                    {order.full_address}
+                  </td>
+                  <td className="table-cell items">
+                    {order.line_items?.map((item, idx) => (
+                      <div key={idx} className="item-row">
+                        {item.quantity}x {item.title}
+                      </div>
+                    ))}
+                  </td>
+                  <td className="table-cell total">
+                    {order.total}
+                  </td>
+                  <td className="table-cell">
+                    <div className="status-column">
+                      <div className={`status-badge ${order.status.replace('_', '-')}`}>
+                        {getStatusLabel(order.status)}
+                      </div>
+                      <div className="status-actions">
+                        {['delivered', 'in_progress', 'cancelled', 'rescheduled'].map((status) => (
+                          <button
+                            key={status}
+                            className="status-action-button"
+                            onClick={() => updateOrderStatus(order._id, status)}
+                            disabled={updatingOrder === order._id || order.status === status}
+                          >
+                            {status === 'in_progress' ? 'In Progress' : 
+                             status.charAt(0).toUpperCase() + status.slice(1)}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="table-cell handled-by">
+                    {order.handled_by?.name ? (
+                      <div>
+                        <div className="handled-by-info">{order.handled_by.name}</div>
+                        <div className="handled-by-timestamp">
+                          {new Date(order.handled_by.updated_at).toLocaleString('en-PK')}
+                        </div>
+                      </div>
+                    ) : (
+                      <span className="not-handled">—</span>
+                    )}
                   </td>
                 </tr>
-              ) : (
-                filteredOrders.map((order) => (
-                  <tr key={order._id} className="border-b">
-                    <td className="p-4 text-blue-600 font-medium">{order.order_number}</td>
-                    <td className="p-4">{getOrderDate(order)}</td>
-                    <td className="p-4">{order.customer_full_name}</td>
-                    <td className="p-4">{order.customer_phone}</td>
-                    <td className="p-4 max-w-xs">{order.full_address}</td>
-                    <td className="p-4 text-sm">
-                      {order.line_items?.map((item, idx) => (
-                        <div key={idx}>{item.quantity}x {item.title}</div>
-                      ))}
-                    </td>
-                    <td className="p-4 text-right font-bold">Rs {order.total}</td>
-                    <td className="p-4 text-center">
-                      <span
-                        className="px-3 py-1 text-white rounded text-sm"
-                        style={{ backgroundColor: getStatusColor(order.status) }}
-                      >
-                        {getStatusLabel(order.status)}
-                      </span>
-                    </td>
-
-                    <td className="p-4 text-sm">
-                      {order.handled_by?.name ? (
-                        <>
-                          <div className="font-medium">{order.handled_by.name}</div>
-                          <div className="text-xs text-gray-600">
-                            {new Date(order.handled_by.updated_at).toLocaleString("en-PK")}
-                          </div>
-                        </>
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* ==== MOBILE ORDER CARDS ==== */}
-      <div className="lg:hidden">
-        {filteredOrders.length === 0 ? (
-          <p className="text-center text-gray-500 p-10">No orders found.</p>
-        ) : (
-          filteredOrders.map((order) => (
-            <div
-              key={order._id}
-              className="bg-white p-4 rounded-xl shadow-md mb-4"
-            >
-              <div className="flex justify-between items-center">
-                <p className="text-blue-600 font-semibold">{order.order_number}</p>
-                <span
-                  className="px-3 py-1 text-white text-xs rounded-lg"
-                  style={{ backgroundColor: getStatusColor(order.status) }}
-                >
-                  {getStatusLabel(order.status)}
-                </span>
-              </div>
-
-              <p className="text-xs text-gray-500 mt-1">{getOrderDate(order)}</p>
-
-              <div className="mt-3 text-sm">
-                <p><strong>{order.customer_full_name}</strong></p>
-                <p>{order.customer_phone}</p>
-                <p className="text-gray-600">{order.full_address}</p>
-              </div>
-
-              <div className="mt-3 text-sm">
-                {order.line_items?.map((item, idx) => (
-                  <div key={idx}>
-                    {item.quantity}x {item.title}
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-4 font-bold text-right text-lg">
-                Rs {order.total}
-              </div>
-
-              {/* Status Buttons */}
-              <div className="mt-4 flex flex-wrap gap-2">
-                {["delivered", "in_progress", "cancelled", "rescheduled"].map((status) => (
-                  <button
-                    key={status}
-                    onClick={() => updateOrderStatus(order._id, status)}
-                    disabled={updatingOrder === order._id || order.status === status}
-                    className={`px-3 py-1 rounded text-xs border ${
-                      order.status === status
-                        ? "bg-gray-300 text-gray-600"
-                        : "bg-gray-100 text-gray-700"
-                    }`}
-                  >
-                    {getStatusLabel(status)}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))
-        )}
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );
@@ -780,13 +579,7 @@ export default function App() {
 
   if (loading) {
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        fontFamily: 'Arial, sans-serif'
-      }}>
+      <div className="loading-container">
         Loading...
       </div>
     );
