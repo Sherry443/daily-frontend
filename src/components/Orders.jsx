@@ -274,7 +274,7 @@ function Orders({ user, onLogout }) {
     });
 
     newSocket.on('order_updated', (updatedOrder) => {
-      console.log('🔄 ORDER UPDATED:', updatedOrder.order_number);
+      console.log('🔄 ORDER UPDATED received via Socket:', updatedOrder.order_number, updatedOrder.status);
       setOrders(prevOrders => 
         prevOrders.map(order => 
           order._id === updatedOrder._id ? updatedOrder : order
@@ -317,9 +317,15 @@ function Orders({ user, onLogout }) {
   };
 
   const updateOrderStatus = async (orderId, status) => {
+    console.log('🔄 Attempting to update order:', orderId, 'to status:', status);
+    
     try {
       setUpdatingOrder(orderId);
       const token = localStorage.getItem('token');
+      
+      console.log('🔑 Token exists:', !!token);
+      console.log('📍 Request URL:', `${BACKEND_URL}/orders/${orderId}/status`);
+      console.log('📦 Request body:', { status });
       
       const response = await fetch(`${BACKEND_URL}/orders/${orderId}/status`, {
         method: 'PATCH',
@@ -330,21 +336,49 @@ function Orders({ user, onLogout }) {
         body: JSON.stringify({ status })
       });
 
+      console.log('📡 Response status:', response.status);
+      console.log('📡 Response headers:', Object.fromEntries(response.headers.entries()));
+
       if (response.ok) {
         const updatedOrder = await response.json();
+        console.log('✅ Order updated successfully:', updatedOrder);
+        
+        // Update state immediately
         setOrders(prevOrders => 
           prevOrders.map(order => 
             order._id === updatedOrder._id ? updatedOrder : order
           )
         );
+        
+        console.log('✅ State updated locally');
       } else if (response.status === 401) {
+        console.error('❌ Unauthorized (401) - logging out');
+        alert('Session expired. Please login again.');
         onLogout();
+      } else {
+        const errorText = await response.text();
+        console.error('❌ Error response:', response.status, errorText);
+        
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { error: errorText };
+        }
+        
+        alert(`Failed to update order: ${errorData.error || 'Unknown error'}`);
       }
     } catch (error) {
-      console.error('Error updating order:', error);
-      alert('Failed to update order status');
+      console.error('❌ Network/Fetch error:', error);
+      console.error('Error details:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
+      alert(`Failed to update order: ${error.message}`);
     } finally {
       setUpdatingOrder(null);
+      console.log('✅ Update process finished');
     }
   };
 
@@ -391,7 +425,6 @@ function Orders({ user, onLogout }) {
     return labels[status] || status;
   };
 
-  // Extract date from order
   const getOrderDate = (order) => {
     if (order.created_at) {
       return new Date(order.created_at).toISOString().split('T')[0];
@@ -399,7 +432,6 @@ function Orders({ user, onLogout }) {
     return '';
   };
 
-  // Filter orders based on status and date range
   const filteredOrders = orders.filter(order => {
     const statusMatch = filterStatus === 'all' || order.status === filterStatus;
     
@@ -418,7 +450,6 @@ function Orders({ user, onLogout }) {
     return statusMatch && dateMatch;
   });
 
-  // Count orders by status (considering date filter)
   const getCountByStatus = (status) => {
     return orders.filter(o => {
       const statusMatch = status === 'all' || o.status === status;
@@ -465,7 +496,6 @@ function Orders({ user, onLogout }) {
       backgroundColor: '#f5f5f5',
       minHeight: '100vh'
     }}>
-      {/* Header */}
       <div style={{
         backgroundColor: 'white',
         padding: '16px 20px',
@@ -514,7 +544,6 @@ function Orders({ user, onLogout }) {
         </div>
       </div>
 
-      {/* Date Filter Section */}
       <div style={{
         backgroundColor: 'white',
         padding: '16px 20px',
@@ -575,7 +604,6 @@ function Orders({ user, onLogout }) {
         </div>
       </div>
 
-      {/* Status Filter Section */}
       <div style={{
         backgroundColor: 'white',
         padding: '16px 20px',
@@ -610,7 +638,6 @@ function Orders({ user, onLogout }) {
         </div>
       </div>
 
-      {/* Table */}
       <div style={{
         backgroundColor: 'white',
         borderRadius: '8px',
