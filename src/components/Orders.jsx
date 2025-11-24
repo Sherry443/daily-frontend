@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 
-const BACKEND_URL = 'https://daily-backend-riders.onrender.com';
+const BACKEND_URL = 'http://localhost:5000';
 
 // Login Component
 function Login({ onLogin }) {
@@ -196,10 +196,12 @@ function Login({ onLogin }) {
 function Orders({ user, onLogout }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [socket, setSocket] = useState(null);
   const [updatingOrder, setUpdatingOrder] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all');
   const [connected, setConnected] = useState(false);
+  const [reconnectAttempts, setReconnectAttempts] = useState(0);
+  
+  const socketRef = useRef(null);
 
   useEffect(() => {
     // Request notification permission
@@ -207,29 +209,51 @@ function Orders({ user, onLogout }) {
       Notification.requestPermission();
     }
 
-    // Initialize Socket.IO
+    // Initialize Socket.IO with better reconnection
     const newSocket = io(BACKEND_URL, {
       transports: ['websocket', 'polling'],
       reconnection: true,
-      reconnectionAttempts: 5,
+      reconnectionAttempts: Infinity,
       reconnectionDelay: 1000,
-      timeout: 10000,
+      reconnectionDelayMax: 5000,
+      timeout: 20000,
+      autoConnect: true,
     });
 
+    socketRef.current = newSocket;
+
     newSocket.on('connect', () => {
-      console.log('✅ Connected to Socket.IO server');
+      console.log('✅ Connected to Socket.IO server. Socket ID:', newSocket.id);
       setConnected(true);
-      // Request initial orders from socket
+      setReconnectAttempts(0);
+      // Request initial orders
       newSocket.emit('get_orders');
     });
 
-    newSocket.on('disconnect', () => {
-      console.log('❌ Disconnected from Socket.IO server');
+    newSocket.on('connected', (data) => {
+      console.log('📡 Welcome message:', data.message);
+    });
+
+    newSocket.on('disconnect', (reason) => {
+      console.log('❌ Disconnected from Socket.IO server. Reason:', reason);
       setConnected(false);
     });
 
+    newSocket.on('reconnect_attempt', (attemptNumber) => {
+      console.log(`🔄 Reconnection attempt #${attemptNumber}`);
+      setReconnectAttempts(attemptNumber);
+    });
+
+    newSocket.on('reconnect', (attemptNumber) => {
+      console.log(`✅ Reconnected after ${attemptNumber} attempts`);
+      setConnected(true);
+      setReconnectAttempts(0);
+      // Request orders again after reconnection
+      newSocket.emit('get_orders');
+    });
+
     newSocket.on('connect_error', (error) => {
-      console.error('❌ Socket connection error:', error);
+      console.error('❌ Socket connection error:', error.message);
       setConnected(false);
     });
 
@@ -243,7 +267,15 @@ function Orders({ user, onLogout }) {
     // Listen for new orders (real-time)
     newSocket.on('new_order', (newOrder) => {
       console.log('🔔 NEW ORDER received:', newOrder.order_number);
-      setOrders(prevOrders => [newOrder, ...prevOrders]);
+      setOrders(prevOrders => {
+        // Check if order already exists
+        const exists = prevOrders.some(o => o._id === newOrder._id);
+        if (exists) {
+          console.log('⚠️ Order already in list, skipping');
+          return prevOrders;
+        }
+        return [newOrder, ...prevOrders];
+      });
       playNotificationSound();
       showNotification('New Order!', `Order ${newOrder.order_number} from ${newOrder.customer_full_name}`);
     });
@@ -258,12 +290,16 @@ function Orders({ user, onLogout }) {
       );
     });
 
-    setSocket(newSocket);
+    newSocket.on('error', (error) => {
+      console.error('❌ Socket error:', error);
+    });
 
     // Fallback: Also fetch via API
     fetchOrders();
 
+    // Cleanup on unmount
     return () => {
+      console.log('🔌 Cleaning up socket connection');
       newSocket.close();
     };
   }, []);
@@ -429,7 +465,7 @@ function Orders({ user, onLogout }) {
               animation: connected ? 'pulse 2s infinite' : 'none'
             }}></span>
             <span style={{ fontSize: '13px', color: '#666', fontWeight: '500' }}>
-              {connected ? 'Live' : 'Offline'}
+              {connected ? 'Live' : reconnectAttempts > 0 ? `Reconnecting (${reconnectAttempts})` : 'Offline'}
             </span>
           </div>
           <button
@@ -463,107 +499,25 @@ function Orders({ user, onLogout }) {
             Filter by Status:
           </span>
           
-          <button
-            onClick={() => setFilterStatus('all')}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: filterStatus === 'all' ? '#1976d2' : '#f0f0f0',
-              color: filterStatus === 'all' ? 'white' : '#333',
-              border: '1px solid #ddd',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '13px',
-              fontWeight: '500',
-              transition: 'all 0.2s'
-            }}
-          >
-            All ({orderCounts.all})
-          </button>
-
-          <button
-            onClick={() => setFilterStatus('pending')}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: filterStatus === 'pending' ? '#757575' : '#f0f0f0',
-              color: filterStatus === 'pending' ? 'white' : '#333',
-              border: '1px solid #ddd',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '13px',
-              fontWeight: '500',
-              transition: 'all 0.2s'
-            }}
-          >
-            Pending ({orderCounts.pending})
-          </button>
-
-          <button
-            onClick={() => setFilterStatus('in_progress')}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: filterStatus === 'in_progress' ? '#ff9800' : '#f0f0f0',
-              color: filterStatus === 'in_progress' ? 'white' : '#333',
-              border: '1px solid #ddd',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '13px',
-              fontWeight: '500',
-              transition: 'all 0.2s'
-            }}
-          >
-            In Progress ({orderCounts.in_progress})
-          </button>
-
-          <button
-            onClick={() => setFilterStatus('delivered')}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: filterStatus === 'delivered' ? '#4caf50' : '#f0f0f0',
-              color: filterStatus === 'delivered' ? 'white' : '#333',
-              border: '1px solid #ddd',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '13px',
-              fontWeight: '500',
-              transition: 'all 0.2s'
-            }}
-          >
-            Delivered ({orderCounts.delivered})
-          </button>
-
-          <button
-            onClick={() => setFilterStatus('cancelled')}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: filterStatus === 'cancelled' ? '#f44336' : '#f0f0f0',
-              color: filterStatus === 'cancelled' ? 'white' : '#333',
-              border: '1px solid #ddd',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '13px',
-              fontWeight: '500',
-              transition: 'all 0.2s'
-            }}
-          >
-            Cancelled ({orderCounts.cancelled})
-          </button>
-
-          <button
-            onClick={() => setFilterStatus('rescheduled')}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: filterStatus === 'rescheduled' ? '#9c27b0' : '#f0f0f0',
-              color: filterStatus === 'rescheduled' ? 'white' : '#333',
-              border: '1px solid #ddd',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '13px',
-              fontWeight: '500',
-              transition: 'all 0.2s'
-            }}
-          >
-            Rescheduled ({orderCounts.rescheduled})
-          </button>
+          {['all', 'pending', 'in_progress', 'delivered', 'cancelled', 'rescheduled'].map((status) => (
+            <button
+              key={status}
+              onClick={() => setFilterStatus(status)}
+              style={{
+                padding: '8px 16px',
+                backgroundColor: filterStatus === status ? getStatusColor(status) : '#f0f0f0',
+                color: filterStatus === status ? 'white' : '#333',
+                border: '1px solid #ddd',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: '500',
+                transition: 'all 0.2s'
+              }}
+            >
+              {status === 'all' ? 'All' : getStatusLabel(status)} ({orderCounts[status]})
+            </button>
+          ))}
         </div>
       </div>
 
