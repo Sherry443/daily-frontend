@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 
-const BACKEND_URL = 'http://localhost:5000';
+const BACKEND_URL = 'https://daily-backend-r2zx.onrender.com';
 
 // Login Component
 function Login({ onLogin }) {
