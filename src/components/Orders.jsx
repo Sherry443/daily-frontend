@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
-import './styles.css';
 
 const BACKEND_URL = 'https://daily-backend-wt0j.onrender.com';
 
@@ -33,6 +32,8 @@ function Login({ onLogin }) {
       const data = await response.json();
 
       if (response.ok) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
         onLogin(data.user);
       } else {
         setError(data.error || 'Something went wrong');
@@ -51,67 +52,122 @@ function Login({ onLogin }) {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <h2 className="login-title">
-          {isRegistering ? 'Create Account' : 'Welcome Back'}
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#f5f5f5',
+      fontFamily: 'Arial, sans-serif'
+    }}>
+      <div style={{
+        backgroundColor: 'white',
+        padding: '40px',
+        borderRadius: '8px',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+        width: '100%',
+        maxWidth: '400px'
+      }}>
+        <h2 style={{ marginTop: 0, marginBottom: '24px', textAlign: 'center' }}>
+          {isRegistering ? 'Create Account' : 'Login'}
         </h2>
 
         {error && (
-          <div className="error-message">
+          <div style={{
+            backgroundColor: '#fee',
+            color: '#c33',
+            padding: '12px',
+            borderRadius: '4px',
+            marginBottom: '16px',
+            fontSize: '14px'
+          }}>
             {error}
           </div>
         )}
 
         <div>
           {isRegistering && (
-            <div className="form-group">
-              <label className="form-label">Name</label>
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+                Name
+              </label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 onKeyPress={handleKeyPress}
-                className="form-input"
-                placeholder="Enter your name"
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  boxSizing: 'border-box'
+                }}
               />
             </div>
           )}
 
-          <div className="form-group">
-            <label className="form-label">Email</label>
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+              Email
+            </label>
             <input
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               onKeyPress={handleKeyPress}
-              className="form-input"
-              placeholder="Enter your email"
+              style={{
+                width: '100%',
+                padding: '10px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '14px',
+                boxSizing: 'border-box'
+              }}
             />
           </div>
 
-          <div className="form-group">
-            <label className="form-label">Password</label>
+          <div style={{ marginBottom: '24px' }}>
+            <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+              Password
+            </label>
             <input
               type="password"
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               onKeyPress={handleKeyPress}
-              className="form-input"
-              placeholder="Enter your password"
+              style={{
+                width: '100%',
+                padding: '10px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '14px',
+                boxSizing: 'border-box'
+              }}
             />
           </div>
 
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className={`btn-primary ${loading ? 'btn-loading' : ''}`}
+            style={{
+              width: '100%',
+              padding: '12px',
+              backgroundColor: loading ? '#ccc' : '#1976d2',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              fontSize: '16px',
+              fontWeight: '500',
+              cursor: loading ? 'not-allowed' : 'pointer'
+            }}
           >
             {loading ? 'Please wait...' : (isRegistering ? 'Register' : 'Login')}
           </button>
         </div>
 
-        <div className="login-footer">
+        <div style={{ marginTop: '16px', textAlign: 'center', fontSize: '14px' }}>
           {isRegistering ? 'Already have an account?' : "Don't have an account?"}
           {' '}
           <button
@@ -119,7 +175,13 @@ function Login({ onLogin }) {
               setIsRegistering(!isRegistering);
               setError('');
             }}
-            className="link-button"
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#1976d2',
+              cursor: 'pointer',
+              textDecoration: 'underline'
+            }}
           >
             {isRegistering ? 'Login' : 'Register'}
           </button>
@@ -138,8 +200,6 @@ function Orders({ user, onLogout }) {
   const [endDate, setEndDate] = useState('');
   const [connected, setConnected] = useState(false);
   const [reconnectAttempts, setReconnectAttempts] = useState(0);
-  const [showFilters, setShowFilters] = useState(false);
-  const [showDateFilter, setShowDateFilter] = useState(false);
   
   const socketRef = useRef(null);
 
@@ -236,7 +296,12 @@ function Orders({ user, onLogout }) {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch(`${BACKEND_URL}/orders`);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${BACKEND_URL}/orders`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -254,11 +319,13 @@ function Orders({ user, onLogout }) {
   const updateOrderStatus = async (orderId, status) => {
     try {
       setUpdatingOrder(orderId);
+      const token = localStorage.getItem('token');
       
       const response = await fetch(`${BACKEND_URL}/orders/${orderId}/status`, {
         method: 'PATCH',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ status })
       });
@@ -304,13 +371,13 @@ function Orders({ user, onLogout }) {
 
   const getStatusColor = (status) => {
     const colors = {
-      delivered: 'status-delivered',
-      in_progress: 'status-progress',
-      cancelled: 'status-cancelled',
-      rescheduled: 'status-rescheduled',
-      pending: 'status-pending'
+      delivered: '#4caf50',
+      in_progress: '#ff9800',
+      cancelled: '#f44336',
+      rescheduled: '#9c27b0',
+      pending: '#757575'
     };
-    return colors[status] || 'status-pending';
+    return colors[status] || '#757575';
   };
 
   const getStatusLabel = (status) => {
@@ -324,6 +391,7 @@ function Orders({ user, onLogout }) {
     return labels[status] || status;
   };
 
+  // Extract date from order
   const getOrderDate = (order) => {
     if (order.created_at) {
       return new Date(order.created_at).toISOString().split('T')[0];
@@ -331,6 +399,7 @@ function Orders({ user, onLogout }) {
     return '';
   };
 
+  // Filter orders based on status and date range
   const filteredOrders = orders.filter(order => {
     const statusMatch = filterStatus === 'all' || order.status === filterStatus;
     
@@ -349,6 +418,7 @@ function Orders({ user, onLogout }) {
     return statusMatch && dateMatch;
   });
 
+  // Count orders by status (considering date filter)
   const getCountByStatus = (status) => {
     return orders.filter(o => {
       const statusMatch = status === 'all' || o.status === status;
@@ -376,158 +446,274 @@ function Orders({ user, onLogout }) {
 
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        fontFamily: 'Arial, sans-serif'
+      }}>
         <div>Loading orders...</div>
       </div>
     );
   }
 
   return (
-    <div className="dashboard">
+    <div style={{
+      fontFamily: 'Arial, sans-serif',
+      padding: '20px',
+      backgroundColor: '#f5f5f5',
+      minHeight: '100vh'
+    }}>
       {/* Header */}
-      <header className="dashboard-header">
-        <div className="header-content">
-          <h1 className="dashboard-title">Orders Dashboard</h1>
-          <div className="header-actions">
-            <span className="user-welcome">
-              Welcome, <strong>{user.name}</strong>
+      <div style={{
+        backgroundColor: 'white',
+        padding: '16px 20px',
+        marginBottom: '20px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderRadius: '8px',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+      }}>
+        <h1 style={{ margin: 0, fontSize: '24px' }}>Orders Dashboard</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <span style={{ fontSize: '14px', color: '#666' }}>
+            Welcome, <strong>{user.name}</strong>
+          </span>
+          <span style={{ fontSize: '14px', color: '#666' }}>
+            {filteredOrders.length} orders
+          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{
+              width: '10px',
+              height: '10px',
+              borderRadius: '50%',
+              backgroundColor: connected ? '#4caf50' : '#f44336',
+              animation: connected ? 'pulse 2s infinite' : 'none'
+            }}></span>
+            <span style={{ fontSize: '13px', color: '#666', fontWeight: '500' }}>
+              {connected ? 'Live' : reconnectAttempts > 0 ? `Reconnecting (${reconnectAttempts})` : 'Offline'}
             </span>
-            <span className="orders-count">
-              {filteredOrders.length} orders
-            </span>
-            <div className="connection-status">
-              <span className={`status-dot ${connected ? 'connected' : 'disconnected'}`}></span>
-              <span className="status-text">
-                {connected ? 'Live' : reconnectAttempts > 0 ? `Reconnecting (${reconnectAttempts})` : 'Offline'}
-              </span>
-            </div>
-            <button onClick={onLogout} className="btn-logout">
-              Logout
-            </button>
           </div>
+          <button
+            onClick={onLogout}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#f44336',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
+            Logout
+          </button>
         </div>
-      </header>
-
-      {/* Mobile Filter Toggle */}
-      <button 
-        className="mobile-filter-toggle"
-        onClick={() => setShowDateFilter(!showDateFilter)}
-      >
-        <span>📅</span> Date Filter
-        <span className="toggle-icon">{showDateFilter ? '▲' : '▼'}</span>
-      </button>
+      </div>
 
       {/* Date Filter Section */}
-      <div className={`filter-section ${showDateFilter ? 'show' : ''}`}>
-        <div className="filter-content">
-          <span className="filter-label">Select Date:</span>
+      <div style={{
+        backgroundColor: 'white',
+        padding: '16px 20px',
+        marginBottom: '20px',
+        borderRadius: '8px',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '14px', fontWeight: '500', color: '#333' }}>
+           Select Date:
+          </span>
           
-          <div className="date-inputs">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="date-input"
+              style={{
+                padding: '8px 12px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '14px',
+                fontFamily: 'Arial, sans-serif'
+              }}
             />
-            <span className="date-separator">TO</span>
+            <span style={{ color: '#999' }}>TO</span>
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="date-input"
+              style={{
+                padding: '8px 12px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '14px',
+                fontFamily: 'Arial, sans-serif'
+              }}
             />
           </div>
 
           {(startDate || endDate) && (
-            <button onClick={resetDateFilter} className="btn-clear-dates">
+            <button
+              onClick={resetDateFilter}
+              style={{
+                padding: '8px 12px',
+                backgroundColor: '#ff9800',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: '500'
+              }}
+            >
               ✕ Clear Dates
             </button>
           )}
         </div>
       </div>
 
-      {/* Mobile Status Filter Toggle */}
-      <button 
-        className="mobile-filter-toggle"
-        onClick={() => setShowFilters(!showFilters)}
-      >
-        <span>🔍</span> Status Filter
-        <span className="toggle-icon">{showFilters ? '▲' : '▼'}</span>
-      </button>
-
       {/* Status Filter Section */}
-      <div className={`filter-section ${showFilters ? 'show' : ''}`}>
-        <div className="filter-content">
-          <span className="filter-label">Filter by Status:</span>
+      <div style={{
+        backgroundColor: 'white',
+        padding: '16px 20px',
+        marginBottom: '20px',
+        borderRadius: '8px',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '14px', fontWeight: '500', color: '#333' }}>
+            Filter by Status:
+          </span>
           
-          <div className="status-filters">
-            {['all', 'pending', 'in_progress', 'delivered', 'cancelled', 'rescheduled'].map((status) => (
-              <button
-                key={status}
-                onClick={() => setFilterStatus(status)}
-                className={`status-filter-btn ${filterStatus === status ? 'active' : ''} ${getStatusColor(status)}`}
-              >
-                {status === 'all' ? 'All' : getStatusLabel(status)} ({getCountByStatus(status)})
-              </button>
-            ))}
-          </div>
+          {['all', 'pending', 'in_progress', 'delivered', 'cancelled', 'rescheduled'].map((status) => (
+            <button
+              key={status}
+              onClick={() => setFilterStatus(status)}
+              style={{
+                padding: '8px 16px',
+                backgroundColor: filterStatus === status ? getStatusColor(status) : '#f0f0f0',
+                color: filterStatus === status ? 'white' : '#333',
+                border: '1px solid #ddd',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: '500',
+                transition: 'all 0.2s'
+              }}
+            >
+              {status === 'all' ? 'All' : getStatusLabel(status)} ({getCountByStatus(status)})
+            </button>
+          ))}
         </div>
       </div>
 
       {/* Table */}
-      <div className="table-container">
-        <table className="orders-table">
+      <div style={{
+        backgroundColor: 'white',
+        borderRadius: '8px',
+        overflow: 'auto',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+      }}>
+        <table style={{
+          width: '100%',
+          borderCollapse: 'collapse',
+          minWidth: '1200px'
+        }}>
           <thead>
-            <tr>
-              <th>Order ID</th>
-              <th>Date</th>
-              <th>Customer</th>
-              <th>Phone</th>
-              <th>Address</th>
-              <th>Items</th>
-              <th className="text-right">Total</th>
-              <th className="text-center">Status</th>
-              <th>Handled By</th>
+            <tr style={{
+              backgroundColor: '#f8f9fa',
+              borderBottom: '2px solid #dee2e6'
+            }}>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Order ID</th>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Date</th>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Customer</th>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Phone</th>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Address</th>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Items</th>
+              <th style={{ padding: '12px 16px', textAlign: 'right', fontWeight: '600' }}>Total</th>
+              <th style={{ padding: '12px 16px', textAlign: 'center', fontWeight: '600' }}>Status</th>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Handled By</th>
             </tr>
           </thead>
           <tbody>
             {filteredOrders.length === 0 ? (
               <tr>
-                <td colSpan="9" className="empty-state">
+                <td colSpan="9" style={{
+                  padding: '40px',
+                  textAlign: 'center',
+                  color: '#999',
+                  fontSize: '16px'
+                }}>
                   {filterStatus === 'all' && !startDate && !endDate 
                     ? 'No orders found' 
-                    : 'No orders found for selected filters'}
+                    : `No orders found for selected filters`}
                 </td>
               </tr>
             ) : (
               filteredOrders.map((order) => (
-                <tr key={order._id}>
-                  <td className="order-id">{order.order_number}</td>
-                  <td className="order-date">{getOrderDate(order)}</td>
-                  <td>{order.customer_full_name}</td>
-                  <td>{order.customer_phone}</td>
-                  <td className="address-cell">{order.full_address}</td>
-                  <td className="items-cell">
+                <tr key={order._id} style={{
+                  borderBottom: '1px solid #e9ecef',
+                  transition: 'background-color 0.2s'
+                }}>
+                  <td style={{ padding: '12px 16px', color: '#1976d2', fontWeight: '500' }}>
+                    {order.order_number}
+                  </td>
+                  <td style={{ padding: '12px 16px', fontSize: '13px' }}>
+                    {getOrderDate(order)}
+                  </td>
+                  <td style={{ padding: '12px 16px' }}>
+                    {order.customer_full_name}
+                  </td>
+                  <td style={{ padding: '12px 16px' }}>
+                    {order.customer_phone}
+                  </td>
+                  <td style={{ padding: '12px 16px', maxWidth: '250px', fontSize: '13px' }}>
+                    {order.full_address}
+                  </td>
+                  <td style={{ padding: '12px 16px', fontSize: '13px' }}>
                     {order.line_items?.map((item, idx) => (
-                      <div key={idx} className="item-row">
+                      <div key={idx} style={{ padding: '2px 0' }}>
                         {item.quantity}x {item.title}
                       </div>
                     ))}
                   </td>
-                  <td className="text-right order-total">{order.total}</td>
-                  <td>
-                    <div className="status-cell">
-                      <span className={`status-badge ${getStatusColor(order.status)}`}>
+                  <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: '500' }}>
+                    {order.total}
+                  </td>
+                  <td style={{ padding: '12px 16px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <div style={{
+                        display: 'inline-block',
+                        padding: '4px 8px',
+                        backgroundColor: getStatusColor(order.status),
+                        color: 'white',
+                        borderRadius: '4px',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        textAlign: 'center',
+                        marginBottom: '8px'
+                      }}>
                         {getStatusLabel(order.status)}
-                      </span>
-                      <div className="status-actions">
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                         {['delivered', 'in_progress', 'cancelled', 'rescheduled'].map((status) => (
                           <button
                             key={status}
                             onClick={() => updateOrderStatus(order._id, status)}
                             disabled={updatingOrder === order._id || order.status === status}
-                            className={`status-action-btn ${order.status === status ? 'disabled' : ''}`}
+                            style={{
+                              padding: '4px 8px',
+                              fontSize: '11px',
+                              backgroundColor: order.status === status ? '#ddd' : '#f0f0f0',
+                              border: '1px solid #ddd',
+                              borderRadius: '3px',
+                              cursor: updatingOrder === order._id || order.status === status ? 'not-allowed' : 'pointer',
+                              opacity: order.status === status ? 0.6 : 1,
+                              fontWeight: '500'
+                            }}
                           >
                             {status === 'in_progress' ? 'In Progress' : 
                              status.charAt(0).toUpperCase() + status.slice(1)}
@@ -536,16 +722,16 @@ function Orders({ user, onLogout }) {
                       </div>
                     </div>
                   </td>
-                  <td className="handled-cell">
+                  <td style={{ padding: '12px 16px', fontSize: '13px' }}>
                     {order.handled_by?.name ? (
                       <div>
-                        <div className="handler-name">{order.handled_by.name}</div>
-                        <div className="handler-date">
+                        <div style={{ fontWeight: '500' }}>{order.handled_by.name}</div>
+                        <div style={{ fontSize: '11px', color: '#666' }}>
                           {new Date(order.handled_by.updated_at).toLocaleString('en-PK')}
                         </div>
                       </div>
                     ) : (
-                      <span className="no-handler">—</span>
+                      <span style={{ color: '#999' }}>—</span>
                     )}
                   </td>
                 </tr>
@@ -554,6 +740,13 @@ function Orders({ user, onLogout }) {
           </tbody>
         </table>
       </div>
+
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+      `}</style>
     </div>
   );
 }
@@ -563,8 +756,12 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const savedUser = { name: 'Demo User' }; // Simulated user
-    setUser(savedUser);
+    const token = localStorage.getItem('token');
+    const savedUser = localStorage.getItem('user');
+    
+    if (token && savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
     setLoading(false);
   }, []);
 
@@ -573,14 +770,21 @@ export default function App() {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setUser(null);
   };
 
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
-        <div>Loading...</div>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        fontFamily: 'Arial, sans-serif'
+      }}>
+        Loading...
       </div>
     );
   }
