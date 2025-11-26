@@ -459,450 +459,295 @@ function Orders({ user, onLogout }) {
   }
 
   return (
-
     <div style={{
-      minHeight: '100vh',
-      backgroundColor: '#0f172a',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-      paddingBottom: '80px'
+      fontFamily: 'Arial, sans-serif',
+      padding: '20px',
+      backgroundColor: '#f5f5f5',
+      minHeight: '100vh'
     }}>
-      {/* Professional Header */}
+      {/* Header */}
       <div style={{
-        background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
-        color: 'white',
-        padding: '20px 16px',
-        position: 'sticky',
-        top: 0,
-        zIndex: 1000,
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+        backgroundColor: 'white',
+        padding: '16px 20px',
+        marginBottom: '20px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderRadius: '8px',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div style={{ flex: 1 }}>
-            <h1 style={{ 
-              margin: 0, 
-              fontSize: '24px', 
-              fontWeight: '700',
-              letterSpacing: '-0.5px',
-              marginBottom: '4px'
-            }}>
-              Orders Dashboard
-            </h1>
-            <div style={{ 
-              fontSize: '13px', 
-              color: 'rgba(255, 255, 255, 0.7)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              marginTop: '6px'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{
-                  width: '6px',
-                  height: '6px',
-                  borderRadius: '50%',
-                  backgroundColor: connected ? '#10b981' : '#ef4444',
-                  boxShadow: `0 0 0 2px rgba(${connected ? '16, 185, 129' : '239, 68, 68'}, 0.2)`
-                }}></div>
-                <span>{connected ? 'Live' : 'Offline'}</span>
-              </div>
-              <div>•</div>
-              <div>{filteredOrders.length} Orders</div>
-            </div>
+        <h1 style={{ margin: 0, fontSize: '24px' }}>Orders Dashboard</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <span style={{ fontSize: '14px', color: '#666' }}>
+            Welcome, <strong>{user.name}</strong>
+          </span>
+          <span style={{ fontSize: '14px', color: '#666' }}>
+            {filteredOrders.length} orders
+          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{
+              width: '10px',
+              height: '10px',
+              borderRadius: '50%',
+              backgroundColor: connected ? '#4caf50' : '#f44336',
+              animation: connected ? 'pulse 2s infinite' : 'none'
+            }}></span>
+            <span style={{ fontSize: '13px', color: '#666', fontWeight: '500' }}>
+              {connected ? 'Live' : reconnectAttempts > 0 ? `Reconnecting (${reconnectAttempts})` : 'Offline'}
+            </span>
           </div>
           <button
-            onClick={() => setShowFilters(!showFilters)}
+            onClick={onLogout}
             style={{
-              background: showFilters ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255, 255, 255, 0.1)',
-              border: showFilters ? '1px solid rgba(59, 130, 246, 0.5)' : '1px solid rgba(255, 255, 255, 0.2)',
-              borderRadius: '10px',
-              padding: '10px',
+              padding: '8px 16px',
+              backgroundColor: '#f44336',
               color: 'white',
+              border: 'none',
+              borderRadius: '4px',
               cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'all 0.2s'
+              fontSize: '14px',
+              fontWeight: '500'
             }}
           >
-            <Filter size={20} />
+            Logout
           </button>
         </div>
       </div>
 
-      {/* Advanced Filters Panel */}
-      {showFilters && (
-        <div style={{
-          background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-          padding: '20px 16px',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)'
-        }}>
-          {/* Date Filter */}
-          <div style={{ marginBottom: '20px' }}>
-            <div style={{ 
-              fontSize: '12px', 
-              fontWeight: '600', 
-              marginBottom: '10px',
-              color: 'rgba(255, 255, 255, 0.9)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px'
-            }}>
-              Date Range
-            </div>
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                style={{
-                  flex: 1,
-                  padding: '12px',
-                  backgroundColor: '#0f172a',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  borderRadius: '10px',
-                  fontSize: '14px',
-                  color: 'white',
-                  outline: 'none'
-                }}
-              />
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                style={{
-                  flex: 1,
-                  padding: '12px',
-                  backgroundColor: '#0f172a',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  borderRadius: '10px',
-                  fontSize: '14px',
-                  color: 'white',
-                  outline: 'none'
-                }}
-              />
-            </div>
-            {(startDate || endDate) && (
-              <button
-                onClick={resetDateFilter}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                  color: '#ef4444',
-                  border: '1px solid rgba(239, 68, 68, 0.3)',
-                  borderRadius: '10px',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: 'pointer'
-                }}
-              >
-                Clear Date Filter
-              </button>
-            )}
-          </div>
-
-          {/* Status Filter */}
-          <div>
-            <div style={{ 
-              fontSize: '12px', 
-              fontWeight: '600', 
-              marginBottom: '10px',
-              color: 'rgba(255, 255, 255, 0.9)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px'
-            }}>
-              Status Filter
-            </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-              {['all', 'pending', 'in_progress', 'delivered', 'cancelled', 'rescheduled'].map((status) => (
-                <button
-                  key={status}
-                  onClick={() => setFilterStatus(status)}
-                  style={{
-                    padding: '10px 16px',
-                    backgroundColor: filterStatus === status ? getStatusColor(status) : 'rgba(255, 255, 255, 0.1)',
-                    color: 'white',
-                    border: filterStatus === status ? 'none' : '1px solid rgba(255, 255, 255, 0.2)',
-                    borderRadius: '20px',
-                    fontSize: '13px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                    boxShadow: filterStatus === status ? '0 4px 6px rgba(0, 0, 0, 0.3)' : 'none'
-                  }}
-                >
-                  {status === 'all' ? 'All' : getStatusLabel(status)} <span style={{ opacity: 0.7 }}>({getCountByStatus(status)})</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Orders List */}
-      <div style={{ padding: '16px' }}>
-        {filteredOrders.length === 0 ? (
-          <div style={{
-            background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-            borderRadius: '16px',
-            padding: '60px 20px',
-            textAlign: 'center',
-            border: '1px solid rgba(255, 255, 255, 0.1)'
-          }}>
-            <Package size={56} style={{ margin: '0 auto 16px', opacity: 0.3, color: 'rgba(255, 255, 255, 0.5)' }} />
-            <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '16px' }}>No orders found</div>
-            <div style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '13px', marginTop: '8px' }}>
-              Try adjusting your filters
-            </div>
-          </div>
-        ) : (
-          filteredOrders.map((order) => (
-            <div
-              key={order._id}
+      {/* Date Filter Section */}
+      <div style={{
+        backgroundColor: 'white',
+        padding: '16px 20px',
+        marginBottom: '20px',
+        borderRadius: '8px',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '14px', fontWeight: '500', color: '#333' }}>
+           Select Date:
+          </span>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
               style={{
-                background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-                borderRadius: '16px',
-                marginBottom: '16px',
-                overflow: 'hidden',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)'
+                padding: '8px 12px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '14px',
+                fontFamily: 'Arial, sans-serif'
+              }}
+            />
+            <span style={{ color: '#999' }}>TO</span>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              style={{
+                padding: '8px 12px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '14px',
+                fontFamily: 'Arial, sans-serif'
+              }}
+            />
+          </div>
+
+          {(startDate || endDate) && (
+            <button
+              onClick={resetDateFilter}
+              style={{
+                padding: '8px 12px',
+                backgroundColor: '#ff9800',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: '500'
               }}
             >
-              {/* Order Header */}
-              <div
-                onClick={() => setExpandedOrder(expandedOrder === order._id ? null : order._id)}
-                style={{
-                  padding: '18px',
-                  cursor: 'pointer',
-                  borderBottom: expandedOrder === order._id ? '1px solid rgba(255, 255, 255, 0.1)' : 'none'
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ 
-                      fontSize: '18px', 
-                      fontWeight: '700', 
-                      color: '#3b82f6', 
-                      marginBottom: '6px',
-                      letterSpacing: '-0.3px'
-                    }}>
-                      {order.order_number}
-                    </div>
-                    <div style={{ 
-                      fontSize: '12px', 
-                      color: 'rgba(255, 255, 255, 0.6)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px'
-                    }}>
-                      <Clock size={12} />
-                      {getOrderDate(order)}
-                    </div>
-                  </div>
-                  <div style={{
-                    padding: '8px 14px',
-                    backgroundColor: getStatusColor(order.status),
-                    color: 'white',
-                    borderRadius: '20px',
-                    fontSize: '12px',
-                    fontWeight: '700',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.3px',
-                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
-                  }}>
-                    {getStatusLabel(order.status)}
-                  </div>
-                </div>
-
-                <div style={{
-                  backgroundColor: 'rgba(0, 0, 0, 0.2)',
-                  borderRadius: '12px',
-                  padding: '14px',
-                  marginBottom: '12px'
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-                    <User size={16} color="rgba(255, 255, 255, 0.7)" />
-                    <span style={{ fontSize: '15px', color: 'white', fontWeight: '600' }}>
-                      {order.customer_full_name}
-                    </span>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Phone size={16} color="rgba(255, 255, 255, 0.7)" />
-                    <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}>
-                      {order.customer_phone}
-                    </span>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ 
-                    fontSize: '22px', 
-                    fontWeight: '700', 
-                    color: '#10b981',
-                    letterSpacing: '-0.5px'
-                  }}>
-                    {order.total}
-                  </div>
-                  <div style={{ 
-                    fontSize: '12px', 
-                    color: '#3b82f6', 
-                    fontWeight: '600',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px'
-                  }}>
-                    {expandedOrder === order._id ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                    {expandedOrder === order._id ? 'Less' : 'More'}
-                  </div>
-                </div>
-              </div>
-
-              {/* Expanded Details */}
-              {expandedOrder === order._id && (
-                <div style={{ padding: '18px', backgroundColor: 'rgba(0, 0, 0, 0.2)' }}>
-                  {/* Address */}
-                  <div style={{ 
-                    marginBottom: '18px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                    borderRadius: '12px',
-                    padding: '14px',
-                    border: '1px solid rgba(255, 255, 255, 0.1)'
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                      <MapPin size={16} color="#3b82f6" />
-                      <span style={{ fontSize: '12px', fontWeight: '700', color: 'rgba(255, 255, 255, 0.9)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                        Delivery Address
-                      </span>
-                    </div>
-                    <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)', lineHeight: '1.6' }}>
-                      {order.full_address}
-                    </div>
-                  </div>
-
-                  {/* Items */}
-                  <div style={{ 
-                    marginBottom: '18px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                    borderRadius: '12px',
-                    padding: '14px',
-                    border: '1px solid rgba(255, 255, 255, 0.1)'
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                      <Package size={16} color="#3b82f6" />
-                      <span style={{ fontSize: '12px', fontWeight: '700', color: 'rgba(255, 255, 255, 0.9)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                        Order Items
-                      </span>
-                    </div>
-                    <div>
-                      {order.line_items?.map((item, idx) => (
-                        <div key={idx} style={{ 
-                          fontSize: '14px', 
-                          color: 'rgba(255, 255, 255, 0.8)',
-                          padding: '8px 0',
-                          borderBottom: idx < order.line_items.length - 1 ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
-                          display: 'flex',
-                          justifyContent: 'space-between'
-                        }}>
-                          <span>{item.title}</span>
-                          <span style={{ fontWeight: '600', color: 'white' }}>×{item.quantity}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Handled By */}
-                  {order.handled_by?.name && (
-                    <div style={{ 
-                      marginBottom: '18px',
-                      backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                      borderRadius: '12px',
-                      padding: '14px',
-                      border: '1px solid rgba(16, 185, 129, 0.2)'
-                    }}>
-                      <div style={{ fontSize: '12px', fontWeight: '700', color: 'rgba(255, 255, 255, 0.9)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                        Handled By
-                      </div>
-                      <div style={{ fontSize: '15px', color: 'white', fontWeight: '600', marginBottom: '4px' }}>
-                        {order.handled_by.name}
-                      </div>
-                      <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
-                        {new Date(order.handled_by.updated_at).toLocaleString('en-PK')}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Status Actions */}
-                  <div>
-                    <div style={{ fontSize: '12px', fontWeight: '700', color: 'rgba(255, 255, 255, 0.9)', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      Update Status
-                    </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                      {['in_progress', 'delivered', 'cancelled', 'rescheduled'].map((status) => (
-                        <button
-                          key={status}
-                          onClick={() => updateOrderStatus(order._id, status)}
-                          disabled={updatingOrder === order._id || order.status === status}
-                          style={{
-                            padding: '14px',
-                            fontSize: '13px',
-                            backgroundColor: order.status === status ? 'rgba(255, 255, 255, 0.1)' : getStatusColor(status),
-                            color: 'white',
-                            border: order.status === status ? '1px solid rgba(255, 255, 255, 0.2)' : 'none',
-                            borderRadius: '10px',
-                            cursor: updatingOrder === order._id || order.status === status ? 'not-allowed' : 'pointer',
-                            fontWeight: '700',
-                            opacity: order.status === status ? 0.5 : 1,
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.3px',
-                            boxShadow: order.status === status ? 'none' : '0 2px 4px rgba(0, 0, 0, 0.2)'
-                          }}
-                        >
-                          {getStatusLabel(status)}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))
-        )}
+              ✕ Clear Dates
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Bottom Logout Button */}
-      <div style={{ 
-        padding: '16px',
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        background: 'linear-gradient(to top, #0f172a 0%, rgba(15, 23, 42, 0.95) 100%)',
-        borderTop: '1px solid rgba(255, 255, 255, 0.1)'
+      {/* Status Filter Section */}
+      <div style={{
+        backgroundColor: 'white',
+        padding: '16px 20px',
+        marginBottom: '20px',
+        borderRadius: '8px',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
       }}>
-        <button
-          onClick={onLogout}
-          style={{
-            width: '100%',
-            padding: '16px',
-            background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-            color: 'white',
-            border: 'none',
-            borderRadius: '12px',
-            fontSize: '16px',
-            fontWeight: '700',
-            cursor: 'pointer',
-            boxShadow: '0 4px 6px -1px rgba(239, 68, 68, 0.4)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px'
-          }}
-        >
-          Logout
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '14px', fontWeight: '500', color: '#333' }}>
+            Filter by Status:
+          </span>
+          
+          {['all', 'pending', 'in_progress', 'delivered', 'cancelled', 'rescheduled'].map((status) => (
+            <button
+              key={status}
+              onClick={() => setFilterStatus(status)}
+              style={{
+                padding: '8px 16px',
+                backgroundColor: filterStatus === status ? getStatusColor(status) : '#f0f0f0',
+                color: filterStatus === status ? 'white' : '#333',
+                border: '1px solid #ddd',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: '500',
+                transition: 'all 0.2s'
+              }}
+            >
+              {status === 'all' ? 'All' : getStatusLabel(status)} ({getCountByStatus(status)})
+            </button>
+          ))}
+        </div>
       </div>
-    </div>
 
+      {/* Table */}
+      <div style={{
+        backgroundColor: 'white',
+        borderRadius: '8px',
+        overflow: 'auto',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+      }}>
+        <table style={{
+          width: '100%',
+          borderCollapse: 'collapse',
+          minWidth: '1200px'
+        }}>
+          <thead>
+            <tr style={{
+              backgroundColor: '#f8f9fa',
+              borderBottom: '2px solid #dee2e6'
+            }}>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Order ID</th>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Date</th>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Customer</th>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Phone</th>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Address</th>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Items</th>
+              <th style={{ padding: '12px 16px', textAlign: 'right', fontWeight: '600' }}>Total</th>
+              <th style={{ padding: '12px 16px', textAlign: 'center', fontWeight: '600' }}>Status</th>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Handled By</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredOrders.length === 0 ? (
+              <tr>
+                <td colSpan="9" style={{
+                  padding: '40px',
+                  textAlign: 'center',
+                  color: '#999',
+                  fontSize: '16px'
+                }}>
+                  {filterStatus === 'all' && !startDate && !endDate 
+                    ? 'No orders found' 
+                    : `No orders found for selected filters`}
+                </td>
+              </tr>
+            ) : (
+              filteredOrders.map((order) => (
+                <tr key={order._id} style={{
+                  borderBottom: '1px solid #e9ecef',
+                  transition: 'background-color 0.2s'
+                }}>
+                  <td style={{ padding: '12px 16px', color: '#1976d2', fontWeight: '500' }}>
+                    {order.order_number}
+                  </td>
+                  <td style={{ padding: '12px 16px', fontSize: '13px' }}>
+                    {getOrderDate(order)}
+                  </td>
+                  <td style={{ padding: '12px 16px' }}>
+                    {order.customer_full_name}
+                  </td>
+                  <td style={{ padding: '12px 16px' }}>
+                    {order.customer_phone}
+                  </td>
+                  <td style={{ padding: '12px 16px', maxWidth: '250px', fontSize: '13px' }}>
+                    {order.full_address}
+                  </td>
+                  <td style={{ padding: '12px 16px', fontSize: '13px' }}>
+                    {order.line_items?.map((item, idx) => (
+                      <div key={idx} style={{ padding: '2px 0' }}>
+                        {item.quantity}x {item.title}
+                      </div>
+                    ))}
+                  </td>
+                  <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: '500' }}>
+                    {order.total}
+                  </td>
+                  <td style={{ padding: '12px 16px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <div style={{
+                        display: 'inline-block',
+                        padding: '4px 8px',
+                        backgroundColor: getStatusColor(order.status),
+                        color: 'white',
+                        borderRadius: '4px',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        textAlign: 'center',
+                        marginBottom: '8px'
+                      }}>
+                        {getStatusLabel(order.status)}
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                        {['delivered', 'in_progress', 'cancelled', 'rescheduled'].map((status) => (
+                          <button
+                            key={status}
+                            onClick={() => updateOrderStatus(order._id, status)}
+                            disabled={updatingOrder === order._id || order.status === status}
+                            style={{
+                              padding: '4px 8px',
+                              fontSize: '11px',
+                              backgroundColor: order.status === status ? '#ddd' : '#f0f0f0',
+                              border: '1px solid #ddd',
+                              borderRadius: '3px',
+                              cursor: updatingOrder === order._id || order.status === status ? 'not-allowed' : 'pointer',
+                              opacity: order.status === status ? 0.6 : 1,
+                              fontWeight: '500'
+                            }}
+                          >
+                            {status === 'in_progress' ? 'In Progress' : 
+                             status.charAt(0).toUpperCase() + status.slice(1)}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </td>
+                  <td style={{ padding: '12px 16px', fontSize: '13px' }}>
+                    {order.handled_by?.name ? (
+                      <div>
+                        <div style={{ fontWeight: '500' }}>{order.handled_by.name}</div>
+                        <div style={{ fontSize: '11px', color: '#666' }}>
+                          {new Date(order.handled_by.updated_at).toLocaleString('en-PK')}
+                        </div>
+                      </div>
+                    ) : (
+                      <span style={{ color: '#999' }}>—</span>
+                    )}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+      `}</style>
+    </div>
   );
 }
 
