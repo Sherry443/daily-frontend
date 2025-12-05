@@ -101,7 +101,9 @@ export default function ProductsPage({ user, onBack }) {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-        fontFamily: 'Arial, sans-serif'
+        fontFamily: 'Arial, sans-serif',
+        backgroundColor: '#123249',
+        color: '#BCB9AC'
       }}>
         <div>Loading products...</div>
       </div>
@@ -112,18 +114,16 @@ export default function ProductsPage({ user, onBack }) {
     <div style={{
       fontFamily: 'Arial, sans-serif',
       padding: '20px',
-      backgroundColor: '#f5f5f5',
+      backgroundColor: '#123249',
       minHeight: '100vh'
     }}>
-
-
       {/* Search and Sort Section */}
       <div style={{
-        backgroundColor: 'white',
+        backgroundColor: 'rgba(188, 185, 172, 0.1)',
         padding: '16px 20px',
         marginBottom: '20px',
-        borderRadius: '8px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        borderRadius: '12px',
+        border: '1px solid rgba(188, 185, 172, 0.2)'
       }}>
         <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
           <div style={{ flex: 1, minWidth: '300px' }}>
@@ -134,43 +134,56 @@ export default function ProductsPage({ user, onBack }) {
               onChange={handleSearch}
               style={{
                 width: '100%',
-                padding: '12px 16px',
-                border: '1px solid #ddd',
-                borderRadius: '6px',
+                padding: '14px 20px',
+                border: '2px solid #BCB9AC',
+                borderRadius: '50px',
                 fontSize: '14px',
                 fontFamily: 'Arial, sans-serif',
-                boxSizing: 'border-box'
+                boxSizing: 'border-box',
+                backgroundColor: 'white',
+                outline: 'none'
               }}
             />
           </div>
           
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <span style={{ fontSize: '14px', fontWeight: '500', color: '#333' }}>
-              Sort by:
-            </span>
-            {['title', 'total_inventory', 'product_type'].map((field) => (
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+            {['title', 'total_inventory'].map((field) => (
               <button
                 key={field}
                 onClick={() => handleSort(field)}
                 style={{
-                  padding: '8px 12px',
-                  backgroundColor: sortBy === field ? '#1976d2' : '#f0f0f0',
-                  color: sortBy === field ? 'white' : '#333',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
+                  padding: '14px 28px',
+                  minHeight: '50px',
+                  backgroundColor: sortBy === field ? '#BCB9AC' : 'transparent',
+                  color: sortBy === field ? '#123249' : '#BCB9AC',
+                  border: `2px solid #BCB9AC`,
+                  borderRadius: '50px',
                   cursor: 'pointer',
-                  fontSize: '13px',
-                  fontWeight: '500',
+                  fontSize: '14px',
+                  fontWeight: '600',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '4px'
+                  gap: '8px',
+                  transition: 'all 0.3s ease',
+                  whiteSpace: 'nowrap'
+                }}
+                onMouseEnter={(e) => {
+                  if (sortBy !== field) {
+                    e.currentTarget.style.backgroundColor = 'rgba(188, 185, 172, 0.2)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (sortBy !== field) {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }
                 }}
               >
                 {field === 'title' && 'Name'}
                 {field === 'total_inventory' && 'Stock'}
-                {field === 'product_type' && 'Type'}
                 {sortBy === field && (
-                  <span>{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                  <span style={{ fontSize: '16px' }}>{sortOrder === 'asc' ? '↑' : '↓'}</span>
                 )}
               </button>
             ))}
@@ -181,19 +194,20 @@ export default function ProductsPage({ user, onBack }) {
       {/* Products Grid */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
         gap: '20px',
         marginBottom: '20px'
       }}>
         {products.length === 0 ? (
           <div style={{
             gridColumn: '1 / -1',
-            backgroundColor: 'white',
+            backgroundColor: 'rgba(188, 185, 172, 0.1)',
             padding: '60px',
-            borderRadius: '8px',
+            borderRadius: '12px',
             textAlign: 'center',
-            color: '#999',
-            fontSize: '16px'
+            color: '#BCB9AC',
+            fontSize: '16px',
+            border: '1px solid rgba(188, 185, 172, 0.2)'
           }}>
             {searchQuery ? 'No products found matching your search' : 'No products available'}
           </div>
@@ -204,31 +218,33 @@ export default function ProductsPage({ user, onBack }) {
             return (
               <div key={product._id} style={{
                 backgroundColor: 'white',
-                borderRadius: '8px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                borderRadius: '12px',
                 overflow: 'hidden',
-                transition: 'transform 0.2s, box-shadow 0.2s',
-                cursor: 'pointer'
+                transition: 'transform 0.3s, box-shadow 0.3s',
+                cursor: 'pointer',
+                border: '2px solid transparent'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                e.currentTarget.style.transform = 'translateY(-6px)';
+                e.currentTarget.style.boxShadow = '0 8px 20px rgba(188, 185, 172, 0.3)';
+                e.currentTarget.style.borderColor = '#BCB9AC';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.borderColor = 'transparent';
               }}>
                 {/* Product Image */}
-                {product.image_url && (
-                  <div style={{
-                    width: '100%',
-                    height: '200px',
-                    backgroundColor: '#f5f5f5',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    overflow: 'hidden'
-                  }}>
+                <div style={{
+                  width: '100%',
+                  height: '280px',
+                  backgroundColor: '#f5f5f5',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden'
+                }}>
+                  {product.image_url ? (
                     <img 
                       src={product.image_url} 
                       alt={product.title}
@@ -242,133 +258,49 @@ export default function ProductsPage({ user, onBack }) {
                         e.target.parentElement.innerHTML = '<div style="color: #999; font-size: 14px;">No Image</div>';
                       }}
                     />
-                  </div>
-                )}
+                  ) : (
+                    <div style={{ color: '#999', fontSize: '14px' }}>No Image</div>
+                  )}
+                </div>
 
-                <div style={{ padding: '16px' }}>
+                <div style={{ padding: '20px' }}>
                   {/* Product Title */}
                   <h3 style={{
-                    margin: '0 0 8px 0',
-                    fontSize: '16px',
+                    margin: '0 0 16px 0',
+                    fontSize: '18px',
                     fontWeight: '600',
-                    color: '#333',
+                    color: '#123249',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    minHeight: '44px'
                   }}>
                     {product.title}
                   </h3>
 
-                  {/* Product Info */}
-                  <div style={{ marginBottom: '12px' }}>
-                    {product.product_type && (
-                      <div style={{ fontSize: '13px', color: '#666', marginBottom: '4px' }}>
-                        <strong>Type:</strong> {product.product_type}
-                      </div>
-                    )}
-                    {product.vendor && (
-                      <div style={{ fontSize: '13px', color: '#666', marginBottom: '4px' }}>
-                        <strong>Vendor:</strong> {product.vendor}
-                      </div>
-                    )}
-                  </div>
-
                   {/* Stock Status Badge */}
                   <div style={{
                     display: 'inline-block',
-                    padding: '6px 12px',
+                    padding: '8px 16px',
                     backgroundColor: stockStatus.color,
                     color: 'white',
-                    borderRadius: '4px',
-                    fontSize: '12px',
+                    borderRadius: '50px',
+                    fontSize: '13px',
                     fontWeight: '600',
-                    marginBottom: '12px'
+                    marginBottom: '16px'
                   }}>
                     {stockStatus.label}
                   </div>
 
                   {/* Total Inventory */}
                   <div style={{
-                    fontSize: '24px',
+                    fontSize: '32px',
                     fontWeight: '700',
-                    color: '#333',
-                    marginBottom: '12px'
+                    color: '#123249'
                   }}>
-                    {product.total_inventory} <span style={{ fontSize: '14px', color: '#666', fontWeight: '400' }}>units</span>
-                  </div>
-
-                  {/* Variants */}
-                  {product.variants && product.variants.length > 0 && (
-                    <div style={{
-                      borderTop: '1px solid #eee',
-                      paddingTop: '12px'
-                    }}>
-                      <div style={{
-                        fontSize: '13px',
-                        fontWeight: '600',
-                        color: '#333',
-                        marginBottom: '8px'
-                      }}>
-                        Variants ({product.variants.length}):
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        {product.variants.map((variant, idx) => (
-                          <div key={idx} style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            fontSize: '12px',
-                            padding: '6px 8px',
-                            backgroundColor: '#f9f9f9',
-                            borderRadius: '4px'
-                          }}>
-                            <span style={{ color: '#666' }}>
-                              {variant.title} {variant.sku && `(${variant.sku})`}
-                            </span>
-                            <span style={{
-                              fontWeight: '600',
-                              color: variant.inventory_quantity === 0 ? '#f44336' : 
-                                     variant.inventory_quantity < 10 ? '#ff9800' : '#4caf50'
-                            }}>
-                              {variant.inventory_quantity} units
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Tags */}
-                  {product.tags && product.tags.length > 0 && (
-                    <div style={{
-                      marginTop: '12px',
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      gap: '6px'
-                    }}>
-                      {product.tags.map((tag, idx) => (
-                        <span key={idx} style={{
-                          padding: '4px 8px',
-                          backgroundColor: '#e3f2fd',
-                          color: '#1976d2',
-                          borderRadius: '3px',
-                          fontSize: '11px',
-                          fontWeight: '500'
-                        }}>
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Last Updated */}
-                  <div style={{
-                    marginTop: '12px',
-                    fontSize: '11px',
-                    color: '#999',
-                    textAlign: 'right'
-                  }}>
-                    Updated: {new Date(product.updated_at).toLocaleString('en-PK')}
+                    {product.total_inventory} <span style={{ fontSize: '16px', color: '#666', fontWeight: '400' }}>units</span>
                   </div>
                 </div>
               </div>
@@ -380,48 +312,76 @@ export default function ProductsPage({ user, onBack }) {
       {/* Pagination */}
       {totalPages > 1 && (
         <div style={{
-          backgroundColor: 'white',
-          padding: '16px 20px',
-          borderRadius: '8px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          backgroundColor: 'rgba(188, 185, 172, 0.1)',
+          padding: '20px',
+          borderRadius: '12px',
+          border: '1px solid rgba(188, 185, 172, 0.2)',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          gap: '12px'
+          gap: '16px'
         }}>
           <button
             onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
             disabled={currentPage === 1}
             style={{
-              padding: '8px 16px',
-              backgroundColor: currentPage === 1 ? '#e0e0e0' : '#1976d2',
-              color: currentPage === 1 ? '#999' : 'white',
+              padding: '14px 28px',
+              minHeight: '50px',
+              backgroundColor: currentPage === 1 ? 'rgba(188, 185, 172, 0.3)' : '#BCB9AC',
+              color: currentPage === 1 ? '#666' : '#123249',
               border: 'none',
-              borderRadius: '4px',
+              borderRadius: '50px',
               cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
               fontSize: '14px',
-              fontWeight: '500'
+              fontWeight: '600',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              if (currentPage !== 1) {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(188, 185, 172, 0.4)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (currentPage !== 1) {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }
             }}
           >
             ← Previous
           </button>
 
-          <span style={{ fontSize: '14px', color: '#666' }}>
-            Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
+          <span style={{ fontSize: '14px', color: '#BCB9AC', fontWeight: '500' }}>
+            Page <strong style={{ fontSize: '16px' }}>{currentPage}</strong> of <strong style={{ fontSize: '16px' }}>{totalPages}</strong>
           </span>
 
           <button
             onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
             disabled={currentPage === totalPages}
             style={{
-              padding: '8px 16px',
-              backgroundColor: currentPage === totalPages ? '#e0e0e0' : '#1976d2',
-              color: currentPage === totalPages ? '#999' : 'white',
+              padding: '14px 28px',
+              minHeight: '50px',
+              backgroundColor: currentPage === totalPages ? 'rgba(188, 185, 172, 0.3)' : '#BCB9AC',
+              color: currentPage === totalPages ? '#666' : '#123249',
               border: 'none',
-              borderRadius: '4px',
+              borderRadius: '50px',
               cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
               fontSize: '14px',
-              fontWeight: '500'
+              fontWeight: '600',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              if (currentPage !== totalPages) {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(188, 185, 172, 0.4)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (currentPage !== totalPages) {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }
             }}
           >
             Next →
