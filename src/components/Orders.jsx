@@ -5,6 +5,7 @@ const BACKEND_URL = 'https://daily-backend-wt0j.onrender.com';
 
 function Login({ onLogin }) {
   const [isRegistering, setIsRegistering] = useState(false);
+
  
   const [formData, setFormData] = useState({
     name: '',
@@ -13,12 +14,6 @@ function Login({ onLogin }) {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
   const handleSubmit = async () => {
     setError('');
     setLoading(true);
@@ -220,7 +215,12 @@ function Orders({ user, onLogout }) {
   const [endDate, setEndDate] = useState('');
   const [connected, setConnected] = useState(false);
   const [reconnectAttempts, setReconnectAttempts] = useState(0);
-  
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   const socketRef = useRef(null);
 
   useEffect(() => {
