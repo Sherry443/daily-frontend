@@ -97,9 +97,9 @@ export default function Login({ onLogin }) {
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 onKeyPress={handleKeyPress}
                 style={{
-                  width: '100%',
+                  width: '90%',
+                  background: "#d9d9d9",
                   padding: '16px',
-             
                   color: '#123249',
                   border: 'none',
                   borderRadius: '50px',
@@ -123,7 +123,8 @@ export default function Login({ onLogin }) {
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               onKeyPress={handleKeyPress}
               style={{
-                width: '100%',
+                width: '90%',
+                  background: "#d9d9d9",
               padding: '16px',
    
               color: '#123249',
@@ -148,7 +149,8 @@ export default function Login({ onLogin }) {
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               onKeyPress={handleKeyPress}
               style={{
-                width: '100%',
+                width: '90%',
+                  background: "#d9d9d9",
               padding: '16px',
               color: '#123249',
               border: 'none',
