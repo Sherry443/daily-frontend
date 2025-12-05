@@ -504,53 +504,11 @@ const filteredOrders = orders.filter(order => {
       }}>
 
   
-        {/* Search Handler Row */}
-        <div style={{ marginBottom: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '14px', fontWeight: '600', color: '#123249' }}>
-              🔍 Handler:
-            </span>
-            <input
-              type="text"
-              placeholder="Search by handler name..."
-              value={searchHandledBy}
-              onChange={(e) => setSearchHandledBy(e.target.value)}
-              style={{
-                padding: '10px 20px',
-                border: '2px solid rgba(18, 50, 73, 0.2)',
-                borderRadius: '25px',
-                fontSize: '13px',
-                fontFamily: 'Arial, sans-serif',
-                flex: isMobile ? '1 1 100%' : '1 1 300px',
-                maxWidth: isMobile ? '100%' : '400px'
-              }}
-            />
-            {searchHandledBy && (
-              <button
-                onClick={() => setSearchHandledBy('')}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: '#f44336',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '25px',
-                  cursor: 'pointer',
-                  fontSize: '13px',
-                  fontWeight: '600',
-                  boxShadow: '0 2px 8px rgba(244, 67, 54, 0.3)',
-                  transition: 'all 0.3s ease'
-                }}
-              >
-                ✕ Clear
-              </button>
-            )}
-          </div>
-        </div>
-  
+
         {/* Status Filter Buttons - Mobile: 2 per row, Desktop: all in one row */}
         <div>
                   {/* Date Filter Row */}
-        <div style={{ marginBottom: '20px' }}>
+        <div style={{ marginBottom: '20px',  display: 'flex' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
             <span style={{ fontSize: '14px', fontWeight: '600', color: '#123249' }}>
               📅 Select Date:
@@ -606,6 +564,49 @@ const filteredOrders = orders.filter(order => {
               </button>
             )}
           </div>
+                  {/* Search Handler Row */}
+        <div style={{ marginBottom: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '14px', fontWeight: '600', color: '#123249' }}>
+              🔍 Handler:
+            </span>
+            <input
+              type="text"
+              placeholder="Search by handler name..."
+              value={searchHandledBy}
+              onChange={(e) => setSearchHandledBy(e.target.value)}
+              style={{
+                padding: '10px 20px',
+                border: '2px solid rgba(18, 50, 73, 0.2)',
+                borderRadius: '25px',
+                fontSize: '13px',
+                fontFamily: 'Arial, sans-serif',
+                flex: isMobile ? '1 1 100%' : '1 1 300px',
+                maxWidth: isMobile ? '100%' : '400px'
+              }}
+            />
+            {searchHandledBy && (
+              <button
+                onClick={() => setSearchHandledBy('')}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#f44336',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '25px',
+                  cursor: 'pointer',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  boxShadow: '0 2px 8px rgba(244, 67, 54, 0.3)',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                ✕ Clear
+              </button>
+            )}
+          </div>
+        </div>
+  
         </div>
           <span style={{ 
             fontSize: '14px', 
