@@ -158,7 +158,7 @@ export default function IntegratedApp() {
           </button>
 
           {/* Routes - For all users */}
-          <button
+          {/* <button
             onClick={navigateToRoutes}
             style={{
               padding: '8px 16px',
@@ -171,7 +171,7 @@ export default function IntegratedApp() {
             }}
           >
             🚚 Routes
-          </button>
+          </button> */}
 
         </div>
 
@@ -231,10 +231,10 @@ export default function IntegratedApp() {
       {currentView === 'profile_dashboard' && (
         <UserProfileDashboard user={user} onBack={() => navigateToOrders('all')} />
       )}
-
+{/* 
       {currentView === 'routes' && (
         <LogisticsChatbot user={user} onBack={() => navigateToOrders('all')} />
-      )}
+      )} */}
     </div>
   );
 }
