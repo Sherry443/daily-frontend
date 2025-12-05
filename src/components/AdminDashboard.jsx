@@ -141,9 +141,9 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
       {/* Date Filter */}
       <div style={{
   
-        padding: '16px 20px',
+  padding: '6px 28px',
         marginBottom: '20px',
-        borderRadius: '50px',
+        borderRadius: '35px',
         border: '1px solid rgba(188, 185, 172, 0.2)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
@@ -157,7 +157,7 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               style={{
-                padding: '10px 16px',
+                padding: '6px 28px',
                 border: '1px solid rgba(188, 185, 172, 0.3)',
                 borderRadius: '50px',
                 fontSize: '14px',
@@ -165,7 +165,7 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
            
                 color: '#BCB9AC',
                 outline: 'none',
-                minHeight: '50px'
+                minHeight: '35px'
               }}
             />
             <span style={{ color: '#BCB9AC', opacity: 0.7 }}>TO</span>
@@ -174,7 +174,7 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               style={{
-                padding: '10px 16px',
+                padding: '6px 28px',
                 border: '1px solid rgba(188, 185, 172, 0.3)',
                 borderRadius: '50px',
                 fontSize: '14px',
@@ -182,7 +182,7 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
  
                 color: '#BCB9AC',
                 outline: 'none',
-                minHeight: '50px'
+                minHeight: '35px'
               }}
             />
           </div>
