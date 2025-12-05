@@ -76,135 +76,160 @@ export default function IntegratedApp() {
 
   const NavigationMenu = () => {
     const isAdmin = user?.isAdmin === true;
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    useEffect(() => {
+      const handleResize = () => setIsMobile(window.innerWidth <= 768);
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    const buttonStyle = (isActive) => ({
+      padding: isMobile ? '10px 24px' : '12px 32px',
+      minHeight: '50px',
+      backgroundColor: isActive ? '#BCB9AC' : 'transparent',
+      color: isActive ? '#123249' : 'white',
+      border: isActive ? 'none' : '2px solid rgba(188, 185, 172, 0.5)',
+      borderRadius: '50px',
+      cursor: 'pointer',
+      fontWeight: '600',
+      fontSize: isMobile ? '13px' : '14px',
+      transition: 'all 0.3s ease',
+      whiteSpace: 'nowrap',
+      boxShadow: isActive ? '0 4px 12px rgba(188, 185, 172, 0.3)' : 'none',
+    });
+
+    const hoverEffect = (e, isActive) => {
+      if (!isActive) {
+        e.target.style.backgroundColor = 'rgba(188, 185, 172, 0.2)';
+        e.target.style.borderColor = '#BCB9AC';
+      }
+    };
+
+    const leaveEffect = (e, isActive) => {
+      if (!isActive) {
+        e.target.style.backgroundColor = 'transparent';
+        e.target.style.borderColor = 'rgba(188, 185, 172, 0.5)';
+      }
+    };
 
     return (
       <div style={{
-        backgroundColor: '#1976d2',
-        padding: '12px 20px',
+        backgroundColor: '#123249',
+        padding: isMobile ? '12px 16px' : '16px 20px',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
         position: 'sticky',
         top: 0,
-        zIndex: 100
+        zIndex: 100,
+        flexWrap: 'wrap',
+        gap: '12px'
       }}>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+        <div style={{ 
+          display: 'flex', 
+          gap: isMobile ? '8px' : '12px', 
+          alignItems: 'center', 
+          flexWrap: 'wrap',
+          flex: 1
+        }}>
           
           {/* Orders - For all users */}
-          <button
-            onClick={() => navigateToOrders('all')}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: currentView === 'orders' ? 'white' : 'transparent',
-              color: currentView === 'orders' ? '#1976d2' : 'white',
-              border: currentView === 'orders' ? 'none' : '1px solid white',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontWeight: '500'
-            }}
-          >
-            📦 Orders
-          </button>
+          {(!isMobile || (isMobile && ['orders', 'products'].includes(currentView))) && (
+            <button
+              onClick={() => navigateToOrders('all')}
+              onMouseEnter={(e) => hoverEffect(e, currentView === 'orders')}
+              onMouseLeave={(e) => leaveEffect(e, currentView === 'orders')}
+              style={buttonStyle(currentView === 'orders')}
+            >
+              📦 Orders
+            </button>
+          )}
 
           {/* Products - For all users */}
-          <button
-            onClick={navigateToProducts}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: currentView === 'products' ? 'white' : 'transparent',
-              color: currentView === 'products' ? '#1976d2' : 'white',
-              border: currentView === 'products' ? 'none' : '1px solid white',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontWeight: '500'
-            }}
-          >
-            🏪 Products
-          </button>
+          {(!isMobile || (isMobile && ['orders', 'products'].includes(currentView))) && (
+            <button
+              onClick={navigateToProducts}
+              onMouseEnter={(e) => hoverEffect(e, currentView === 'products')}
+              onMouseLeave={(e) => leaveEffect(e, currentView === 'products')}
+              style={buttonStyle(currentView === 'products')}
+            >
+              🏪 Products
+            </button>
+          )}
 
           {/* Admin Dashboard - ONLY for Admin */}
-          {isAdmin && (
+          {isAdmin && (!isMobile || (isMobile && ['admin_dashboard', 'profile_dashboard'].includes(currentView))) && (
             <button
               onClick={navigateToAdminDashboard}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: currentView === 'admin_dashboard' ? 'white' : 'transparent',
-                color: currentView === 'admin_dashboard' ? '#1976d2' : 'white',
-                border: currentView === 'admin_dashboard' ? 'none' : '1px solid white',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontWeight: '500'
-              }}
+              onMouseEnter={(e) => hoverEffect(e, currentView === 'admin_dashboard')}
+              onMouseLeave={(e) => leaveEffect(e, currentView === 'admin_dashboard')}
+              style={buttonStyle(currentView === 'admin_dashboard')}
             >
               📊 Dashboard
             </button>
           )}
 
           {/* User Profile - For all users */}
-          <button
-            onClick={navigateToProfileDashboard}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: currentView === 'profile_dashboard' ? 'white' : 'transparent',
-              color: currentView === 'profile_dashboard' ? '#1976d2' : 'white',
-              border: currentView === 'profile_dashboard' ? 'none' : '1px solid white',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontWeight: '500'
-            }}
-          >
-            👤 My Profile
-          </button>
-
-          {/* Routes - For all users */}
-          {/* <button
-            onClick={navigateToRoutes}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: currentView === 'routes' ? 'white' : 'transparent',
-              color: currentView === 'routes' ? '#1976d2' : 'white',
-              border: currentView === 'routes' ? 'none' : '1px solid white',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontWeight: '500'
-            }}
-          >
-            🚚 Routes
-          </button> */}
+          {(!isMobile || (isMobile && ['admin_dashboard', 'profile_dashboard'].includes(currentView))) && (
+            <button
+              onClick={navigateToProfileDashboard}
+              onMouseEnter={(e) => hoverEffect(e, currentView === 'profile_dashboard')}
+              onMouseLeave={(e) => leaveEffect(e, currentView === 'profile_dashboard')}
+              style={buttonStyle(currentView === 'profile_dashboard')}
+            >
+              👤 My Profile
+            </button>
+          )}
 
         </div>
 
         {/* Right Side */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <span style={{ color: 'white' }}>
-            Welcome, <strong>{user.name}</strong>
-            {isAdmin && (
-              <span style={{ 
-                marginLeft: '8px', 
-                fontSize: '12px', 
-                backgroundColor: '#4caf50', 
-                padding: '2px 8px', 
-                borderRadius: '4px',
-                fontWeight: 'bold'
-              }}>
-                Admin
-              </span>
-            )}
-          </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+          {!isMobile && (
+            <span style={{ color: 'white', fontSize: '14px' }}>
+              Welcome, <strong>{user.name}</strong>
+              {isAdmin && (
+                <span style={{ 
+                  marginLeft: '8px', 
+                  fontSize: '11px', 
+                  backgroundColor: '#BCB9AC', 
+                  color: '#123249',
+                  padding: '4px 10px', 
+                  borderRadius: '50px',
+                  fontWeight: 'bold'
+                }}>
+                  Admin
+                </span>
+              )}
+            </span>
+          )}
           <button
             onClick={handleLogout}
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = '#c62828';
+              e.target.style.transform = 'scale(1.05)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = '#f44336';
+              e.target.style.transform = 'scale(1)';
+            }}
             style={{
-              padding: '8px 16px',
+              padding: isMobile ? '10px 20px' : '12px 28px',
+              minHeight: '50px',
               backgroundColor: '#f44336',
               color: 'white',
               border: 'none',
-              borderRadius: '4px',
+              borderRadius: '50px',
               cursor: 'pointer',
-              fontWeight: '500'
+              fontWeight: '600',
+              fontSize: isMobile ? '13px' : '14px',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 4px 12px rgba(244, 67, 54, 0.3)'
             }}
           >
-            Logout
+            🚪 Logout
           </button>
         </div>
       </div>
@@ -231,10 +256,6 @@ export default function IntegratedApp() {
       {currentView === 'profile_dashboard' && (
         <UserProfileDashboard user={user} onBack={() => navigateToOrders('all')} />
       )}
-{/* 
-      {currentView === 'routes' && (
-        <LogisticsChatbot user={user} onBack={() => navigateToOrders('all')} />
-      )} */}
     </div>
   );
 }
