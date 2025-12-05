@@ -143,7 +143,7 @@ export default function IntegratedApp() {
               onMouseLeave={(e) => leaveEffect(e, currentView === 'orders')}
               style={buttonStyle(currentView === 'orders')}
             >
-              📦 Orders
+              Orders
             </button>
           )}
 
@@ -155,7 +155,7 @@ export default function IntegratedApp() {
               onMouseLeave={(e) => leaveEffect(e, currentView === 'products')}
               style={buttonStyle(currentView === 'products')}
             >
-              🏪 Products
+              Products
             </button>
           )}
 
@@ -167,7 +167,7 @@ export default function IntegratedApp() {
               onMouseLeave={(e) => leaveEffect(e, currentView === 'admin_dashboard')}
               style={buttonStyle(currentView === 'admin_dashboard')}
             >
-              📊 Dashboard
+              Dashboard
             </button>
           )}
 
@@ -179,7 +179,7 @@ export default function IntegratedApp() {
               onMouseLeave={(e) => leaveEffect(e, currentView === 'profile_dashboard')}
               style={buttonStyle(currentView === 'profile_dashboard')}
             >
-              👤 My Profile
+              My Profile
             </button>
           )}
 
@@ -229,7 +229,7 @@ export default function IntegratedApp() {
               boxShadow: '0 4px 12px rgba(244, 67, 54, 0.3)'
             }}
           >
-            🚪 Logout
+            Logout
           </button>
         </div>
       </div>
