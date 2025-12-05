@@ -134,7 +134,7 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
     <div style={{
       fontFamily: 'Arial, sans-serif',
       padding: '20px',
-  
+      backgroundColor: '#123249',
       minHeight: '100vh'
     }}>
 
