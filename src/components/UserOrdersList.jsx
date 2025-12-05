@@ -7,6 +7,7 @@ export default function UserOrdersList() {
   const [stats, setStats] = useState(null);
   const [pagination, setPagination] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [updatingOrder, setUpdatingOrder] = useState(null);
   
   // Filters
   const [status, setStatus] = useState('all');
@@ -55,6 +56,40 @@ export default function UserOrdersList() {
     }
   };
 
+  const updateOrderStatus = async (orderId, newStatus) => {
+    try {
+      setUpdatingOrder(orderId);
+      const token = localStorage.getItem('token');
+      
+      const response = await fetch(`${BACKEND_URL}/orders/${orderId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      if (response.ok) {
+        const updatedOrder = await response.json();
+        setOrders(prevOrders => 
+          prevOrders.map(order => 
+            order._id === updatedOrder._id ? updatedOrder : order
+          )
+        );
+      } else if (response.status === 401) {
+        alert('Session expired. Please login again.');
+      } else {
+        alert('Failed to update order status');
+      }
+    } catch (error) {
+      console.error('Error updating order:', error);
+      alert('Failed to update order status');
+    } finally {
+      setUpdatingOrder(null);
+    }
+  };
+
   const resetFilters = () => {
     setStatus('all');
     setStartDate('');
@@ -87,33 +122,36 @@ export default function UserOrdersList() {
 
   return (
     <div style={{
-      fontFamily: 'Arial, sans-serif'
+      fontFamily: 'Arial, sans-serif',
+      padding: '20px',
+      backgroundColor: '#f5f5f5',
+      minHeight: '100vh'
     }}>
       {/* Filters */}
       <div style={{
-        backgroundColor: 'rgba(188, 185, 172, 0.1)',
+        backgroundColor: 'white',
         padding: '20px',
         marginBottom: '20px',
-        borderRadius: '32px',
-        border: '1px solid rgba(188, 185, 172, 0.2)'
+        borderRadius: '12px',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
       }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '18px', alignItems: 'center' }}>
           {/* Status Filter */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <label style={{ fontSize: '14px', fontWeight: '500', color: '#BCB9AC' }}>Status:</label>
+            <label style={{ fontSize: '14px', fontWeight: '600', color: '#123249' }}>Status:</label>
             <select
               value={status}
               onChange={(e) => { setStatus(e.target.value); setPage(1); }}
               style={{
-                padding: '6px 28px',
-                minHeight: '35px',
-                border: '2px solid #BCB9AC',
-                borderRadius: '50px',
-                fontSize: '14px',
+                padding: '10px 20px',
+                border: '2px solid rgba(18, 50, 73, 0.2)',
+                borderRadius: '25px',
+                fontSize: '13px',
                 fontFamily: 'Arial, sans-serif',
                 backgroundColor: 'white',
                 outline: 'none',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                fontWeight: '600'
               }}
             >
               <option value="all">All</option>
@@ -127,17 +165,16 @@ export default function UserOrdersList() {
 
           {/* Date Range */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <label style={{ fontSize: '14px', fontWeight: '500', color: '#BCB9AC' }}>From:</label>
+            <label style={{ fontSize: '14px', fontWeight: '600', color: '#123249' }}>From:</label>
             <input
               type="date"
               value={startDate}
               onChange={(e) => { setStartDate(e.target.value); setPage(1); }}
               style={{
-                padding: '6px 28px',
-                minHeight: '35px',
-                border: '2px solid #BCB9AC',
-                borderRadius: '50px',
-                fontSize: '14px',
+                padding: '10px 14px',
+                border: '2px solid rgba(18, 50, 73, 0.2)',
+                borderRadius: '25px',
+                fontSize: '13px',
                 fontFamily: 'Arial, sans-serif',
                 backgroundColor: 'white',
                 outline: 'none'
@@ -145,18 +182,17 @@ export default function UserOrdersList() {
             />
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <label style={{ fontSize: '14px', fontWeight: '500', color: '#BCB9AC' }}>To:</label>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <label style={{ fontSize: '14px', fontWeight: '600', color: '#123249' }}>To:</label>
             <input
               type="date"
               value={endDate}
               onChange={(e) => { setEndDate(e.target.value); setPage(1); }}
               style={{
-                padding: '6px 28px',
-                minHeight: '35px',
-                border: '2px solid #BCB9AC',
-                borderRadius: '50px',
-                fontSize: '14px',
+                padding: '10px 14px',
+                border: '2px solid rgba(18, 50, 73, 0.2)',
+                borderRadius: '25px',
+                fontSize: '13px',
                 fontFamily: 'Arial, sans-serif',
                 backgroundColor: 'white',
                 outline: 'none'
@@ -166,20 +202,20 @@ export default function UserOrdersList() {
 
           {/* Sort Order */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <label style={{ fontSize: '14px', fontWeight: '500', color: '#BCB9AC' }}>Sort:</label>
+            <label style={{ fontSize: '14px', fontWeight: '600', color: '#123249' }}>Sort:</label>
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
               style={{
-                padding: '6px 28px',
-                minHeight: '35px',
-                border: '2px solid #BCB9AC',
-                borderRadius: '50px',
-                fontSize: '14px',
+                padding: '10px 20px',
+                border: '2px solid rgba(18, 50, 73, 0.2)',
+                borderRadius: '25px',
+                fontSize: '13px',
                 fontFamily: 'Arial, sans-serif',
                 backgroundColor: 'white',
                 outline: 'none',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                fontWeight: '600'
               }}
             >
               <option value="desc">Newest First</option>
@@ -191,24 +227,16 @@ export default function UserOrdersList() {
           <button
             onClick={resetFilters}
             style={{
-              padding: '6px 28px',
-              minHeight: '35px',
+              padding: '10px 20px',
               backgroundColor: '#BCB9AC',
               color: '#123249',
               border: 'none',
-              borderRadius: '50px',
+              borderRadius: '25px',
               cursor: 'pointer',
-              fontSize: '14px',
+              fontSize: '13px',
               fontWeight: '600',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(188, 185, 172, 0.4)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
+              transition: 'all 0.3s ease',
+              boxShadow: '0 2px 8px rgba(188, 185, 172, 0.3)'
             }}
           >
             Reset Filters
@@ -221,7 +249,7 @@ export default function UserOrdersList() {
         backgroundColor: 'white',
         borderRadius: '12px',
         overflow: 'auto',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
       }}>
         {loading ? (
           <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
@@ -231,25 +259,29 @@ export default function UserOrdersList() {
           <table style={{
             width: '100%',
             borderCollapse: 'collapse',
-            minWidth: '1000px'
+            minWidth: '1200px'
           }}>
             <thead>
               <tr style={{
                 backgroundColor: '#123249',
-                borderBottom: '2px solid #BCB9AC'
+                color: 'white',
+                borderBottom: '2px solid #dee2e6'
               }}>
-                <th style={{ padding: '16px', textAlign: 'left', fontWeight: '600', color: '#BCB9AC' }}>Order ID</th>
-                <th style={{ padding: '16px', textAlign: 'left', fontWeight: '600', color: '#BCB9AC' }}>Customer</th>
-                <th style={{ padding: '16px', textAlign: 'left', fontWeight: '600', color: '#BCB9AC' }}>Phone</th>
-                <th style={{ padding: '16px', textAlign: 'right', fontWeight: '600', color: '#BCB9AC' }}>Total</th>
-                <th style={{ padding: '16px', textAlign: 'center', fontWeight: '600', color: '#BCB9AC' }}>Status</th>
-                <th style={{ padding: '16px', textAlign: 'left', fontWeight: '600', color: '#BCB9AC' }}>Handled Date</th>
+                <th style={{ padding: '14px 16px', textAlign: 'left', fontWeight: '600' }}>Order ID</th>
+                <th style={{ padding: '14px 16px', textAlign: 'left', fontWeight: '600' }}>Date</th>
+                <th style={{ padding: '14px 16px', textAlign: 'left', fontWeight: '600' }}>Customer</th>
+                <th style={{ padding: '14px 16px', textAlign: 'left', fontWeight: '600' }}>Phone</th>
+                <th style={{ padding: '14px 16px', textAlign: 'left', fontWeight: '600' }}>Address</th>
+                <th style={{ padding: '14px 16px', textAlign: 'left', fontWeight: '600' }}>Items</th>
+                <th style={{ padding: '14px 16px', textAlign: 'right', fontWeight: '600' }}>Total</th>
+                <th style={{ padding: '14px 16px', textAlign: 'center', fontWeight: '600' }}>Status</th>
+                <th style={{ padding: '14px 16px', textAlign: 'left', fontWeight: '600' }}>Handled Date</th>
               </tr>
             </thead>
             <tbody>
               {orders.length === 0 ? (
                 <tr>
-                  <td colSpan="6" style={{
+                  <td colSpan="9" style={{
                     padding: '40px',
                     textAlign: 'center',
                     color: '#999',
@@ -262,40 +294,75 @@ export default function UserOrdersList() {
                 orders.map((order) => (
                   <tr key={order._id} style={{
                     borderBottom: '1px solid #e9ecef',
-                    transition: 'background-color 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = '#f8f9fa';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
+                    transition: 'background-color 0.2s'
                   }}>
-                    <td style={{ padding: '16px', color: '#123249', fontWeight: '600' }}>
+                    <td style={{ padding: '12px 16px', color: '#123249', fontWeight: '600' }}>
                       {order.order_number}
                     </td>
-                    <td style={{ padding: '16px', color: '#333' }}>
+                    <td style={{ padding: '12px 16px', fontSize: '13px' }}>
+                      {order.created_at ? new Date(order.created_at).toISOString().split('T')[0] : '—'}
+                    </td>
+                    <td style={{ padding: '12px 16px' }}>
                       {order.customer_full_name}
                     </td>
-                    <td style={{ padding: '16px', color: '#333' }}>
+                    <td style={{ padding: '12px 16px' }}>
                       {order.customer_phone}
                     </td>
-                    <td style={{ padding: '16px', textAlign: 'right', fontWeight: '600', color: '#123249' }}>
+                    <td style={{ padding: '12px 16px', maxWidth: '250px', fontSize: '13px' }}>
+                      {order.full_address}
+                    </td>
+                    <td style={{ padding: '12px 16px', fontSize: '13px' }}>
+                      {order.line_items?.map((item, idx) => (
+                        <div key={idx} style={{ padding: '2px 0' }}>
+                          {item.quantity}x {item.title}
+                        </div>
+                      ))}
+                    </td>
+                    <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: '600', color: '#123249' }}>
                       {order.total}
                     </td>
-                    <td style={{ padding: '16px', textAlign: 'center' }}>
-                      <span style={{
-                        padding: '6px 16px',
-                        borderRadius: '50px',
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        color: 'white',
-                        backgroundColor: getStatusColor(order.status),
-                        display: 'inline-block'
-                      }}>
-                        {getStatusLabel(order.status)}
-                      </span>
+                    <td style={{ padding: '12px 16px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <div style={{
+                          display: 'inline-block',
+                          padding: '6px 12px',
+                          backgroundColor: getStatusColor(order.status),
+                          color: 'white',
+                          borderRadius: '25px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          textAlign: 'center',
+                          marginBottom: '8px'
+                        }}>
+                          {getStatusLabel(order.status)}
+                        </div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                          {['delivered', 'in_progress', 'cancelled', 'rescheduled'].map((statusOption) => (
+                            <button
+                              key={statusOption}
+                              onClick={() => updateOrderStatus(order._id, statusOption)}
+                              disabled={updatingOrder === order._id || order.status === statusOption}
+                              style={{
+                                padding: '6px 12px',
+                                fontSize: '11px',
+                                backgroundColor: order.status === statusOption ? '#BCB9AC' : '#f0f0f0',
+                                color: order.status === statusOption ? '#123249' : '#666',
+                                border: order.status === statusOption ? 'none' : '1px solid #ddd',
+                                borderRadius: '20px',
+                                cursor: updatingOrder === order._id || order.status === statusOption ? 'not-allowed' : 'pointer',
+                                opacity: order.status === statusOption ? 0.6 : 1,
+                                fontWeight: '600',
+                                transition: 'all 0.2s ease'
+                              }}
+                            >
+                              {statusOption === 'in_progress' ? 'In Progress' : 
+                               statusOption.charAt(0).toUpperCase() + statusOption.slice(1)}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     </td>
-                    <td style={{ padding: '16px', fontSize: '13px', color: '#666' }}>
+                    <td style={{ padding: '12px 16px', fontSize: '13px' }}>
                       {order.handled_by?.updated_at 
                         ? new Date(order.handled_by.updated_at).toLocaleString('en-PK')
                         : '—'}
@@ -311,18 +378,18 @@ export default function UserOrdersList() {
       {/* Pagination */}
       {pagination && pagination.totalPages > 1 && (
         <div style={{
-          backgroundColor: 'rgba(188, 185, 172, 0.1)',
+          backgroundColor: 'white',
           padding: '20px',
           marginTop: '20px',
           borderRadius: '12px',
-          border: '1px solid rgba(188, 185, 172, 0.2)',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: '16px'
         }}>
-          <div style={{ fontSize: '14px', color: '#BCB9AC', fontWeight: '500' }}>
+          <div style={{ fontSize: '14px', color: '#666', fontWeight: '500' }}>
             Showing {pagination.skip + 1} to {Math.min(pagination.skip + pagination.limit, pagination.total)} of {pagination.total} orders
           </div>
           
@@ -331,28 +398,15 @@ export default function UserOrdersList() {
               onClick={() => setPage(Math.max(1, page - 1))}
               disabled={page === 1}
               style={{
-                padding: '14px 28px',
-                minHeight: '50px',
-                backgroundColor: page === 1 ? 'rgba(188, 185, 172, 0.3)' : '#BCB9AC',
-                color: page === 1 ? '#666' : '#123249',
+                padding: '10px 20px',
+                backgroundColor: page === 1 ? '#e0e0e0' : '#BCB9AC',
+                color: page === 1 ? '#999' : '#123249',
                 border: 'none',
-                borderRadius: '50px',
+                borderRadius: '25px',
                 cursor: page === 1 ? 'not-allowed' : 'pointer',
-                fontSize: '14px',
+                fontSize: '13px',
                 fontWeight: '600',
                 transition: 'all 0.3s ease'
-              }}
-              onMouseEnter={(e) => {
-                if (page !== 1) {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(188, 185, 172, 0.4)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (page !== 1) {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }
               }}
             >
               ← Previous
@@ -360,38 +414,25 @@ export default function UserOrdersList() {
             
             <span style={{
               fontSize: '14px',
-              fontWeight: '500',
-              color: '#BCB9AC'
+              fontWeight: '600',
+              color: '#123249'
             }}>
-              Page <strong style={{ fontSize: '16px' }}>{pagination.page}</strong> of <strong style={{ fontSize: '16px' }}>{pagination.totalPages}</strong>
+              Page {pagination.page} of {pagination.totalPages}
             </span>
             
             <button
               onClick={() => setPage(Math.min(pagination.totalPages, page + 1))}
               disabled={page === pagination.totalPages}
               style={{
-                padding: '14px 28px',
-                minHeight: '50px',
-                backgroundColor: page === pagination.totalPages ? 'rgba(188, 185, 172, 0.3)' : '#BCB9AC',
-                color: page === pagination.totalPages ? '#666' : '#123249',
+                padding: '10px 20px',
+                backgroundColor: page === pagination.totalPages ? '#e0e0e0' : '#BCB9AC',
+                color: page === pagination.totalPages ? '#999' : '#123249',
                 border: 'none',
-                borderRadius: '50px',
+                borderRadius: '25px',
                 cursor: page === pagination.totalPages ? 'not-allowed' : 'pointer',
-                fontSize: '14px',
+                fontSize: '13px',
                 fontWeight: '600',
                 transition: 'all 0.3s ease'
-              }}
-              onMouseEnter={(e) => {
-                if (page !== pagination.totalPages) {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(188, 185, 172, 0.4)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (page !== pagination.totalPages) {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }
               }}
             >
               Next →
@@ -399,6 +440,17 @@ export default function UserOrdersList() {
           </div>
         </div>
       )}
+
+      <style>{`
+        tr:hover {
+          background-color: rgba(188, 185, 172, 0.1) !important;
+        }
+        
+        button:not(:disabled):hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(188, 185, 172, 0.4);
+        }
+      `}</style>
     </div>
   );
 }
