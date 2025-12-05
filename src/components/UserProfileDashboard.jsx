@@ -176,7 +176,7 @@ export default function UserProfileDashboard({ user, onBack }) {
       {/* Date Filter */}
       <div style={{
         backgroundColor: 'rgba(188, 185, 172, 0.1)',
-        padding: '16px 20px',
+        padding: '8px 40px',
         marginBottom: '20px',
         borderRadius: '12px',
         border: '1px solid rgba(188, 185, 172, 0.2)'
@@ -192,7 +192,7 @@ export default function UserProfileDashboard({ user, onBack }) {
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               style={{
-                padding: '8px 22px',
+                padding: '6px 28px',
                 border: '2px solid #BCB9AC',
                 borderRadius: '50px',
                 fontSize: '14px',
@@ -208,7 +208,7 @@ export default function UserProfileDashboard({ user, onBack }) {
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               style={{
-                padding: '8px 22px',
+                padding: '6px 28px',
                 border: '2px solid #BCB9AC',
                 borderRadius: '50px',
                 fontSize: '14px',
