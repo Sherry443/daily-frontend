@@ -508,7 +508,7 @@ const filteredOrders = orders.filter(order => {
         {/* Status Filter Buttons - Mobile: 2 per row, Desktop: all in one row */}
         <div>
                   {/* Date Filter Row */}
-        <div style={{ marginBottom: '20px',  display: 'flex' }}>
+        <div style={{ marginBottom: '20px',  display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
             <span style={{ fontSize: '14px', fontWeight: '600', color: '#123249' }}>
               📅 Select Date:
