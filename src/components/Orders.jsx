@@ -511,7 +511,7 @@ const filteredOrders = orders.filter(order => {
         <div style={{ marginBottom: '20px',  display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between', width: '100%' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
             <span style={{ fontSize: '14px', fontWeight: '600', color: '#123249' }}>
-              📅 Select Date:
+              Select Date:
             </span>
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
@@ -567,8 +567,9 @@ const filteredOrders = orders.filter(order => {
                   {/* Search Handler Row */}
         <div style={{ marginBottom: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+
             <span style={{ fontSize: '14px', fontWeight: '600', color: '#123249' }}>
-              🔍 Handler:
+              Search By Name:
             </span>
             <input
               type="text"
@@ -615,7 +616,7 @@ const filteredOrders = orders.filter(order => {
             display: 'block',
             marginBottom: '12px'
           }}>
-            📊 Filter by Status:
+            Filter By Status:
           </span>
           
           <div style={{ 
@@ -645,7 +646,7 @@ const filteredOrders = orders.filter(order => {
                   }
                 }}
               >
-                {status === 'all' ? '📦 All' : getStatusLabel(status)} ({getCountByStatus(status)})
+                {status === 'all' ? ' All' : getStatusLabel(status)} ({getCountByStatus(status)})
               </button>
             ))}
           </div>
