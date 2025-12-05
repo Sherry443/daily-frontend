@@ -45,7 +45,20 @@ function Login({ onLogin }) {
       setLoading(false);
     }
   };
-
+  const buttonStyle = (isActive, color = '#BCB9AC') => ({
+    padding: isMobile ? '10px 20px' : '12px 28px',
+    minHeight: '50px',
+    backgroundColor: isActive ? color : 'transparent',
+    color: isActive ? '#123249' : '#123249',
+    border: isActive ? 'none' : '2px solid rgba(18, 50, 73, 0.3)',
+    borderRadius: '50px',
+    cursor: 'pointer',
+    fontWeight: '600',
+    fontSize: isMobile ? '12px' : '13px',
+    transition: 'all 0.3s ease',
+    whiteSpace: 'nowrap',
+    boxShadow: isActive ? '0 4px 12px rgba(188, 185, 172, 0.4)' : 'none',
+  });
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       handleSubmit();
@@ -468,160 +481,173 @@ const filteredOrders = orders.filter(order => {
   return (
     <div style={{
       fontFamily: 'Arial, sans-serif',
-      padding: '20px',
+      padding: isMobile ? '12px' : '20px',
       backgroundColor: '#f5f5f5',
       minHeight: '100vh'
     }}>
-
-
-      {/* Date Filter Section */}
+  
+      {/* Filters and Search Section - Side by Side */}
       <div style={{
         backgroundColor: 'white',
-        padding: '16px 20px',
+        padding: isMobile ? '16px' : '20px 24px',
         marginBottom: '20px',
-        borderRadius: '8px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        borderRadius: '12px',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '14px', fontWeight: '500', color: '#333' }}>
-           Select Date:
-          </span>
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              style={{
-                padding: '8px 12px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '14px',
-                fontFamily: 'Arial, sans-serif'
-              }}
-            />
-            <span style={{ color: '#999' }}>TO</span>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              style={{
-                padding: '8px 12px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '14px',
-                fontFamily: 'Arial, sans-serif'
-              }}
-            />
+        {/* Date Filter Row */}
+        <div style={{ marginBottom: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '14px', fontWeight: '600', color: '#123249' }}>
+              📅 Select Date:
+            </span>
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                style={{
+                  padding: '10px 14px',
+                  border: '2px solid rgba(18, 50, 73, 0.2)',
+                  borderRadius: '25px',
+                  fontSize: '13px',
+                  fontFamily: 'Arial, sans-serif',
+                  minWidth: isMobile ? '130px' : '150px'
+                }}
+              />
+              <span style={{ color: '#123249', fontWeight: '600' }}>to</span>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                style={{
+                  padding: '10px 14px',
+                  border: '2px solid rgba(18, 50, 73, 0.2)',
+                  borderRadius: '25px',
+                  fontSize: '13px',
+                  fontFamily: 'Arial, sans-serif',
+                  minWidth: isMobile ? '130px' : '150px'
+                }}
+              />
+            </div>
+  
+            {(startDate || endDate) && (
+              <button
+                onClick={resetDateFilter}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#f44336',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '25px',
+                  cursor: 'pointer',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  boxShadow: '0 2px 8px rgba(244, 67, 54, 0.3)',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                ✕ Clear
+              </button>
+            )}
           </div>
-
-          {(startDate || endDate) && (
-            <button
-              onClick={resetDateFilter}
-              style={{
-                padding: '8px 12px',
-                backgroundColor: '#ff9800',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '13px',
-                fontWeight: '500'
-              }}
-            >
-              ✕ Clear Dates
-            </button>
-          )}
         </div>
-      </div>
-
-      {/* Status Filter Section */} 
-
-      <div style={{
-        backgroundColor: 'white',
-        padding: '16px 20px',
-        marginBottom: '20px',
-        borderRadius: '8px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '14px', fontWeight: '500', color: '#333' }}>
-            Filter by Status:
+  
+        {/* Search Handler Row */}
+        <div style={{ marginBottom: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '14px', fontWeight: '600', color: '#123249' }}>
+              🔍 Handler:
+            </span>
+            <input
+              type="text"
+              placeholder="Search by handler name..."
+              value={searchHandledBy}
+              onChange={(e) => setSearchHandledBy(e.target.value)}
+              style={{
+                padding: '10px 20px',
+                border: '2px solid rgba(18, 50, 73, 0.2)',
+                borderRadius: '25px',
+                fontSize: '13px',
+                fontFamily: 'Arial, sans-serif',
+                flex: isMobile ? '1 1 100%' : '1 1 300px',
+                maxWidth: isMobile ? '100%' : '400px'
+              }}
+            />
+            {searchHandledBy && (
+              <button
+                onClick={() => setSearchHandledBy('')}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#f44336',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '25px',
+                  cursor: 'pointer',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  boxShadow: '0 2px 8px rgba(244, 67, 54, 0.3)',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                ✕ Clear
+              </button>
+            )}
+          </div>
+        </div>
+  
+        {/* Status Filter Buttons - Mobile: 2 per row, Desktop: all in one row */}
+        <div>
+          <span style={{ 
+            fontSize: '14px', 
+            fontWeight: '600', 
+            color: '#123249',
+            display: 'block',
+            marginBottom: '12px'
+          }}>
+            📊 Filter by Status:
           </span>
           
-          {['all', 'pending', 'in_progress', 'delivered', 'cancelled', 'rescheduled'].map((status) => (
-            <button
-              key={status}
-              onClick={() => setFilterStatus(status)}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: filterStatus === status ? getStatusColor(status) : '#f0f0f0',
-                color: filterStatus === status ? 'white' : '#333',
-                border: '1px solid #ddd',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontSize: '13px',
-                fontWeight: '500',
-                transition: 'all 0.2s'
-              }}
-            >
-              {status === 'all' ? 'All' : getStatusLabel(status)} ({getCountByStatus(status)})
-            </button>
-          ))}
-          {/* Search by Handled By */}
-<div style={{
-  backgroundColor: 'white',
-  padding: '16px 20px',
-  marginBottom: '20px',
-  borderRadius: '8px',
-  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-}}>
-  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-    <span style={{ fontSize: '14px', fontWeight: '500', color: '#333' }}>
-      Search by Handler:
-    </span>
-    <input
-      type="text"
-      placeholder="Enter handler name..."
-      value={searchHandledBy}
-      onChange={(e) => setSearchHandledBy(e.target.value)}
-      style={{
-        padding: '8px 12px',
-        border: '1px solid #ddd',
-        borderRadius: '4px',
-        fontSize: '14px',
-        fontFamily: 'Arial, sans-serif',
-        width: '300px'
-      }}
-    />
-    {searchHandledBy && (
-      <button
-        onClick={() => setSearchHandledBy('')}
-        style={{
-          padding: '8px 12px',
-          backgroundColor: '#ff9800',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          fontSize: '13px',
-          fontWeight: '500'
-        }}
-      >
-        ✕ Clear Search
-      </button>
-    )}
-  </div>
-</div>
+          <div style={{ 
+            display: 'grid',
+            gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(140px, auto))',
+            gap: '10px',
+            alignItems: 'center'
+          }}>
+            {['all', 'pending', 'in_progress', 'delivered', 'cancelled', 'rescheduled'].map((status) => (
+              <button
+                key={status}
+                onClick={() => setFilterStatus(status)}
+                style={buttonStyle(
+                  filterStatus === status,
+                  filterStatus === status ? getStatusColor(status) : '#BCB9AC'
+                )}
+                onMouseEnter={(e) => {
+                  if (filterStatus !== status) {
+                    e.target.style.backgroundColor = 'rgba(188, 185, 172, 0.2)';
+                    e.target.style.borderColor = '#BCB9AC';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (filterStatus !== status) {
+                    e.target.style.backgroundColor = 'transparent';
+                    e.target.style.borderColor = 'rgba(18, 50, 73, 0.3)';
+                  }
+                }}
+              >
+                {status === 'all' ? '📦 All' : getStatusLabel(status)} ({getCountByStatus(status)})
+              </button>
+            ))}
+          </div>
         </div>
       </div>
-
+  
       {/* Table */}
       <div style={{
         backgroundColor: 'white',
-        borderRadius: '8px',
+        borderRadius: '12px',
         overflow: 'auto',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
       }}>
         <table style={{
           width: '100%',
@@ -630,18 +656,19 @@ const filteredOrders = orders.filter(order => {
         }}>
           <thead>
             <tr style={{
-              backgroundColor: '#f8f9fa',
+              backgroundColor: '#123249',
+              color: 'white',
               borderBottom: '2px solid #dee2e6'
             }}>
-              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Order ID</th>
-              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Date</th>
-              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Customer</th>
-              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Phone</th>
-              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Address</th>
-              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Items</th>
-              <th style={{ padding: '12px 16px', textAlign: 'right', fontWeight: '600' }}>Total</th>
-              <th style={{ padding: '12px 16px', textAlign: 'center', fontWeight: '600' }}>Status</th>
-              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Handled By</th>
+              <th style={{ padding: '14px 16px', textAlign: 'left', fontWeight: '600' }}>Order ID</th>
+              <th style={{ padding: '14px 16px', textAlign: 'left', fontWeight: '600' }}>Date</th>
+              <th style={{ padding: '14px 16px', textAlign: 'left', fontWeight: '600' }}>Customer</th>
+              <th style={{ padding: '14px 16px', textAlign: 'left', fontWeight: '600' }}>Phone</th>
+              <th style={{ padding: '14px 16px', textAlign: 'left', fontWeight: '600' }}>Address</th>
+              <th style={{ padding: '14px 16px', textAlign: 'left', fontWeight: '600' }}>Items</th>
+              <th style={{ padding: '14px 16px', textAlign: 'right', fontWeight: '600' }}>Total</th>
+              <th style={{ padding: '14px 16px', textAlign: 'center', fontWeight: '600' }}>Status</th>
+              <th style={{ padding: '14px 16px', textAlign: 'left', fontWeight: '600' }}>Handled By</th>
             </tr>
           </thead>
           <tbody>
@@ -664,7 +691,7 @@ const filteredOrders = orders.filter(order => {
                   borderBottom: '1px solid #e9ecef',
                   transition: 'background-color 0.2s'
                 }}>
-                  <td style={{ padding: '12px 16px', color: '#1976d2', fontWeight: '500' }}>
+                  <td style={{ padding: '12px 16px', color: '#123249', fontWeight: '600' }}>
                     {order.order_number}
                   </td>
                   <td style={{ padding: '12px 16px', fontSize: '13px' }}>
@@ -686,39 +713,41 @@ const filteredOrders = orders.filter(order => {
                       </div>
                     ))}
                   </td>
-                  <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: '500' }}>
+                  <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: '600', color: '#123249' }}>
                     {order.total}
                   </td>
                   <td style={{ padding: '12px 16px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       <div style={{
                         display: 'inline-block',
-                        padding: '4px 8px',
+                        padding: '6px 12px',
                         backgroundColor: getStatusColor(order.status),
                         color: 'white',
-                        borderRadius: '4px',
+                        borderRadius: '25px',
                         fontSize: '12px',
-                        fontWeight: '500',
+                        fontWeight: '600',
                         textAlign: 'center',
                         marginBottom: '8px'
                       }}>
                         {getStatusLabel(order.status)}
                       </div>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                         {['delivered', 'in_progress', 'cancelled', 'rescheduled'].map((status) => (
                           <button
                             key={status}
                             onClick={() => updateOrderStatus(order._id, status)}
                             disabled={updatingOrder === order._id || order.status === status}
                             style={{
-                              padding: '4px 8px',
+                              padding: '6px 12px',
                               fontSize: '11px',
-                              backgroundColor: order.status === status ? '#ddd' : '#f0f0f0',
-                              border: '1px solid #ddd',
-                              borderRadius: '3px',
+                              backgroundColor: order.status === status ? '#BCB9AC' : '#f0f0f0',
+                              color: order.status === status ? '#123249' : '#666',
+                              border: order.status === status ? 'none' : '1px solid #ddd',
+                              borderRadius: '20px',
                               cursor: updatingOrder === order._id || order.status === status ? 'not-allowed' : 'pointer',
                               opacity: order.status === status ? 0.6 : 1,
-                              fontWeight: '500'
+                              fontWeight: '600',
+                              transition: 'all 0.2s ease'
                             }}
                           >
                             {status === 'in_progress' ? 'In Progress' : 
@@ -731,7 +760,7 @@ const filteredOrders = orders.filter(order => {
                   <td style={{ padding: '12px 16px', fontSize: '13px' }}>
                     {order.handled_by?.name ? (
                       <div>
-                        <div style={{ fontWeight: '500' }}>{order.handled_by.name}</div>
+                        <div style={{ fontWeight: '600', color: '#123249' }}>{order.handled_by.name}</div>
                         <div style={{ fontSize: '11px', color: '#666' }}>
                           {new Date(order.handled_by.updated_at).toLocaleString('en-PK')}
                         </div>
@@ -746,11 +775,19 @@ const filteredOrders = orders.filter(order => {
           </tbody>
         </table>
       </div>
-
+  
       <style>{`
         @keyframes pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }
+        }
+        
+        input[type="date"]::-webkit-calendar-picker-indicator {
+          cursor: pointer;
+        }
+        
+        tr:hover {
+          background-color: rgba(188, 185, 172, 0.1) !important;
         }
       `}</style>
     </div>
