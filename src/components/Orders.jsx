@@ -626,7 +626,7 @@ const filteredOrders = orders.filter(order => {
     )}
   </div>
 </div>
-      {/* Status Filter Section */} qwertyuiop[]
+      {/* Status Filter Section */} 
 
       <div style={{
         backgroundColor: 'white',
