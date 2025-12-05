@@ -566,7 +566,7 @@ const filteredOrders = orders.filter(order => {
           </div>
                   {/* Search Handler Row */}
         <div style={{ marginBottom: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' , flexDirection: 'column'}}>
+          <div>
 
               Search By Name:
     
