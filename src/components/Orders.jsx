@@ -215,12 +215,7 @@ function Orders({ user, onLogout }) {
   const [endDate, setEndDate] = useState('');
   const [connected, setConnected] = useState(false);
   const [reconnectAttempts, setReconnectAttempts] = useState(0);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+
   const socketRef = useRef(null);
 
   useEffect(() => {
@@ -468,7 +463,13 @@ const filteredOrders = orders.filter(order => {
     setStartDate('');
     setEndDate('');
   };
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   if (loading) {
     return (
       <div style={{
