@@ -87,34 +87,33 @@ export default function UserOrdersList() {
 
   return (
     <div style={{
-      fontFamily: 'Arial, sans-serif',
-      padding: '20px',
-      backgroundColor: '#f5f5f5',
-      minHeight: '100vh'
+      fontFamily: 'Arial, sans-serif'
     }}>
-    
-
       {/* Filters */}
       <div style={{
-        backgroundColor: 'white',
+        backgroundColor: 'rgba(188, 185, 172, 0.1)',
         padding: '20px',
         marginBottom: '20px',
-        borderRadius: '8px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        borderRadius: '12px',
+        border: '1px solid rgba(188, 185, 172, 0.2)'
       }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
           {/* Status Filter */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <label style={{ fontSize: '14px', fontWeight: '500' }}>Status:</label>
+            <label style={{ fontSize: '14px', fontWeight: '500', color: '#BCB9AC' }}>Status:</label>
             <select
               value={status}
               onChange={(e) => { setStatus(e.target.value); setPage(1); }}
               style={{
-                padding: '8px 12px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
+                padding: '12px 16px',
+                minHeight: '50px',
+                border: '2px solid #BCB9AC',
+                borderRadius: '50px',
                 fontSize: '14px',
-                fontFamily: 'Arial, sans-serif'
+                fontFamily: 'Arial, sans-serif',
+                backgroundColor: 'white',
+                outline: 'none',
+                cursor: 'pointer'
               }}
             >
               <option value="all">All</option>
@@ -128,49 +127,59 @@ export default function UserOrdersList() {
 
           {/* Date Range */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <label style={{ fontSize: '14px', fontWeight: '500' }}>From:</label>
+            <label style={{ fontSize: '14px', fontWeight: '500', color: '#BCB9AC' }}>From:</label>
             <input
               type="date"
               value={startDate}
               onChange={(e) => { setStartDate(e.target.value); setPage(1); }}
               style={{
-                padding: '8px 12px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
+                padding: '12px 16px',
+                minHeight: '50px',
+                border: '2px solid #BCB9AC',
+                borderRadius: '50px',
                 fontSize: '14px',
-                fontFamily: 'Arial, sans-serif'
+                fontFamily: 'Arial, sans-serif',
+                backgroundColor: 'white',
+                outline: 'none'
               }}
             />
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <label style={{ fontSize: '14px', fontWeight: '500' }}>To:</label>
+            <label style={{ fontSize: '14px', fontWeight: '500', color: '#BCB9AC' }}>To:</label>
             <input
               type="date"
               value={endDate}
               onChange={(e) => { setEndDate(e.target.value); setPage(1); }}
               style={{
-                padding: '8px 12px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
+                padding: '12px 16px',
+                minHeight: '50px',
+                border: '2px solid #BCB9AC',
+                borderRadius: '50px',
                 fontSize: '14px',
-                fontFamily: 'Arial, sans-serif'
+                fontFamily: 'Arial, sans-serif',
+                backgroundColor: 'white',
+                outline: 'none'
               }}
             />
           </div>
 
           {/* Sort Order */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <label style={{ fontSize: '14px', fontWeight: '500' }}>Sort:</label>
+            <label style={{ fontSize: '14px', fontWeight: '500', color: '#BCB9AC' }}>Sort:</label>
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
               style={{
-                padding: '8px 12px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
+                padding: '12px 16px',
+                minHeight: '50px',
+                border: '2px solid #BCB9AC',
+                borderRadius: '50px',
                 fontSize: '14px',
-                fontFamily: 'Arial, sans-serif'
+                fontFamily: 'Arial, sans-serif',
+                backgroundColor: 'white',
+                outline: 'none',
+                cursor: 'pointer'
               }}
             >
               <option value="desc">Newest First</option>
@@ -182,17 +191,27 @@ export default function UserOrdersList() {
           <button
             onClick={resetFilters}
             style={{
-              padding: '8px 16px',
-              backgroundColor: '#ff9800',
-              color: 'white',
+              padding: '14px 28px',
+              minHeight: '50px',
+              backgroundColor: '#BCB9AC',
+              color: '#123249',
               border: 'none',
-              borderRadius: '4px',
+              borderRadius: '50px',
               cursor: 'pointer',
               fontSize: '14px',
-              fontWeight: '500'
+              fontWeight: '600',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(188, 185, 172, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
             }}
           >
-            ✕ Reset Filters
+            Reset Filters
           </button>
         </div>
       </div>
@@ -200,7 +219,7 @@ export default function UserOrdersList() {
       {/* Orders Table */}
       <div style={{
         backgroundColor: 'white',
-        borderRadius: '8px',
+        borderRadius: '12px',
         overflow: 'auto',
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
       }}>
@@ -216,22 +235,21 @@ export default function UserOrdersList() {
           }}>
             <thead>
               <tr style={{
-                backgroundColor: '#f8f9fa',
-                borderBottom: '2px solid #dee2e6'
+                backgroundColor: '#123249',
+                borderBottom: '2px solid #BCB9AC'
               }}>
-                <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Order ID</th>
-                <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Customer</th>
-                <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Phone</th>
-                <th style={{ padding: '12px 16px', textAlign: 'right', fontWeight: '600' }}>Total</th>
-                <th style={{ padding: '12px 16px', textAlign: 'center', fontWeight: '600' }}>Status</th>
-                {/* <th style={{ padding: '12px 16px', textAlign: 'center', fontWeight: '600' }}>Approval</th> */}
-                <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: '600' }}>Handled Date</th>
+                <th style={{ padding: '16px', textAlign: 'left', fontWeight: '600', color: '#BCB9AC' }}>Order ID</th>
+                <th style={{ padding: '16px', textAlign: 'left', fontWeight: '600', color: '#BCB9AC' }}>Customer</th>
+                <th style={{ padding: '16px', textAlign: 'left', fontWeight: '600', color: '#BCB9AC' }}>Phone</th>
+                <th style={{ padding: '16px', textAlign: 'right', fontWeight: '600', color: '#BCB9AC' }}>Total</th>
+                <th style={{ padding: '16px', textAlign: 'center', fontWeight: '600', color: '#BCB9AC' }}>Status</th>
+                <th style={{ padding: '16px', textAlign: 'left', fontWeight: '600', color: '#BCB9AC' }}>Handled Date</th>
               </tr>
             </thead>
             <tbody>
               {orders.length === 0 ? (
                 <tr>
-                  <td colSpan="7" style={{
+                  <td colSpan="6" style={{
                     padding: '40px',
                     textAlign: 'center',
                     color: '#999',
@@ -243,48 +261,41 @@ export default function UserOrdersList() {
               ) : (
                 orders.map((order) => (
                   <tr key={order._id} style={{
-                    borderBottom: '1px solid #e9ecef'
+                    borderBottom: '1px solid #e9ecef',
+                    transition: 'background-color 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#f8f9fa';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
                   }}>
-                    <td style={{ padding: '12px 16px', color: '#1976d2', fontWeight: '500' }}>
+                    <td style={{ padding: '16px', color: '#123249', fontWeight: '600' }}>
                       {order.order_number}
                     </td>
-                    <td style={{ padding: '12px 16px' }}>
+                    <td style={{ padding: '16px', color: '#333' }}>
                       {order.customer_full_name}
                     </td>
-                    <td style={{ padding: '12px 16px' }}>
+                    <td style={{ padding: '16px', color: '#333' }}>
                       {order.customer_phone}
                     </td>
-                    <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: '500' }}>
+                    <td style={{ padding: '16px', textAlign: 'right', fontWeight: '600', color: '#123249' }}>
                       {order.total}
                     </td>
-                    <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                    <td style={{ padding: '16px', textAlign: 'center' }}>
                       <span style={{
-                        padding: '4px 8px',
-                        borderRadius: '4px',
+                        padding: '6px 16px',
+                        borderRadius: '50px',
                         fontSize: '12px',
-                        fontWeight: '500',
+                        fontWeight: '600',
                         color: 'white',
-                        backgroundColor: getStatusColor(order.status)
+                        backgroundColor: getStatusColor(order.status),
+                        display: 'inline-block'
                       }}>
                         {getStatusLabel(order.status)}
                       </span>
                     </td>
-                    {/* <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                      <span style={{
-                        padding: '4px 8px',
-                        borderRadius: '4px',
-                        fontSize: '12px',
-                        fontWeight: '500',
-                        color: 'white',
-                        backgroundColor: 
-                          order.admin_approval?.status === 'confirmed' ? '#4caf50' :
-                          order.admin_approval?.status === 'denied' ? '#f44336' : '#757575'
-                      }}>
-                        {order.admin_approval?.status === 'confirmed' ? 'Confirmed' :
-                         order.admin_approval?.status === 'denied' ? 'Denied' : 'Pending'}
-                      </span>
-                    </td> */}
-                    <td style={{ padding: '12px 16px', fontSize: '13px' }}>
+                    <td style={{ padding: '16px', fontSize: '13px', color: '#666' }}>
                       {order.handled_by?.updated_at 
                         ? new Date(order.handled_by.updated_at).toLocaleString('en-PK')
                         : '—'}
@@ -300,59 +311,87 @@ export default function UserOrdersList() {
       {/* Pagination */}
       {pagination && pagination.totalPages > 1 && (
         <div style={{
-          backgroundColor: 'white',
-          padding: '16px 20px',
+          backgroundColor: 'rgba(188, 185, 172, 0.1)',
+          padding: '20px',
           marginTop: '20px',
-          borderRadius: '8px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          borderRadius: '12px',
+          border: '1px solid rgba(188, 185, 172, 0.2)',
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center'
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '16px'
         }}>
-          <div style={{ fontSize: '14px', color: '#666' }}>
+          <div style={{ fontSize: '14px', color: '#BCB9AC', fontWeight: '500' }}>
             Showing {pagination.skip + 1} to {Math.min(pagination.skip + pagination.limit, pagination.total)} of {pagination.total} orders
           </div>
           
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <button
               onClick={() => setPage(Math.max(1, page - 1))}
               disabled={page === 1}
               style={{
-                padding: '8px 16px',
-                backgroundColor: page === 1 ? '#e0e0e0' : '#1976d2',
-                color: page === 1 ? '#999' : 'white',
+                padding: '14px 28px',
+                minHeight: '50px',
+                backgroundColor: page === 1 ? 'rgba(188, 185, 172, 0.3)' : '#BCB9AC',
+                color: page === 1 ? '#666' : '#123249',
                 border: 'none',
-                borderRadius: '4px',
+                borderRadius: '50px',
                 cursor: page === 1 ? 'not-allowed' : 'pointer',
                 fontSize: '14px',
-                fontWeight: '500'
+                fontWeight: '600',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                if (page !== 1) {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(188, 185, 172, 0.4)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (page !== 1) {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }
               }}
             >
               ← Previous
             </button>
             
             <span style={{
-              padding: '8px 16px',
               fontSize: '14px',
               fontWeight: '500',
-              display: 'flex',
-              alignItems: 'center'
+              color: '#BCB9AC'
             }}>
-              Page {pagination.page} of {pagination.totalPages}
+              Page <strong style={{ fontSize: '16px' }}>{pagination.page}</strong> of <strong style={{ fontSize: '16px' }}>{pagination.totalPages}</strong>
             </span>
             
             <button
               onClick={() => setPage(Math.min(pagination.totalPages, page + 1))}
               disabled={page === pagination.totalPages}
               style={{
-                padding: '8px 16px',
-                backgroundColor: page === pagination.totalPages ? '#e0e0e0' : '#1976d2',
-                color: page === pagination.totalPages ? '#999' : 'white',
+                padding: '14px 28px',
+                minHeight: '50px',
+                backgroundColor: page === pagination.totalPages ? 'rgba(188, 185, 172, 0.3)' : '#BCB9AC',
+                color: page === pagination.totalPages ? '#666' : '#123249',
                 border: 'none',
-                borderRadius: '4px',
+                borderRadius: '50px',
                 cursor: page === pagination.totalPages ? 'not-allowed' : 'pointer',
                 fontSize: '14px',
-                fontWeight: '500'
+                fontWeight: '600',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                if (page !== pagination.totalPages) {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(188, 185, 172, 0.4)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (page !== pagination.totalPages) {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }
               }}
             >
               Next →

@@ -177,8 +177,7 @@ export default function UserProfileDashboard({ user, onBack }) {
       <div style={{
         padding: '8px 40px',
         marginBottom: '20px',
-        borderRadius: '12px',
-        border: '1px solid rgba(188, 185, 172, 0.2)'
+
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
           <span style={{ fontSize: '14px', fontWeight: '500', color: '#BCB9AC' }}>
