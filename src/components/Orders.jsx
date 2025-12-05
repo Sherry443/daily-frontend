@@ -5,6 +5,7 @@ const BACKEND_URL = 'https://daily-backend-wt0j.onrender.com';
 
 function Login({ onLogin }) {
   const [isRegistering, setIsRegistering] = useState(false);
+ 
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -197,6 +198,7 @@ function Orders({ user, onLogout }) {
   const [updatingOrder, setUpdatingOrder] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all');
   const [startDate, setStartDate] = useState('');
+  const [searchHandledBy, setSearchHandledBy] = useState('');
   const [endDate, setEndDate] = useState('');
   const [connected, setConnected] = useState(false);
   const [reconnectAttempts, setReconnectAttempts] = useState(0);
@@ -400,23 +402,28 @@ function Orders({ user, onLogout }) {
   };
 
   // Filter orders based on status and date range
-  const filteredOrders = orders.filter(order => {
-    const statusMatch = filterStatus === 'all' || order.status === filterStatus;
-    
-    let dateMatch = true;
-    if (startDate || endDate) {
-      const orderDate = getOrderDate(order);
-      if (startDate && endDate) {
-        dateMatch = orderDate >= startDate && orderDate <= endDate;
-      } else if (startDate) {
-        dateMatch = orderDate >= startDate;
-      } else if (endDate) {
-        dateMatch = orderDate <= endDate;
-      }
+// Filter orders based on status, date range, and handled by name
+const filteredOrders = orders.filter(order => {
+  const statusMatch = filterStatus === 'all' || order.status === filterStatus;
+  
+  let dateMatch = true;
+  if (startDate || endDate) {
+    const orderDate = getOrderDate(order);
+    if (startDate && endDate) {
+      dateMatch = orderDate >= startDate && orderDate <= endDate;
+    } else if (startDate) {
+      dateMatch = orderDate >= startDate;
+    } else if (endDate) {
+      dateMatch = orderDate <= endDate;
     }
-    
-    return statusMatch && dateMatch;
-  });
+  }
+  
+  const handledByMatch = !searchHandledBy || 
+    (order.handled_by?.name && 
+     order.handled_by.name.toLowerCase().includes(searchHandledBy.toLowerCase()));
+  
+  return statusMatch && dateMatch && handledByMatch;
+});
 
   // Count orders by status (considering date filter)
   const getCountByStatus = (status) => {
@@ -574,8 +581,53 @@ function Orders({ user, onLogout }) {
           )}
         </div>
       </div>
+{/* Search by Handled By */}
+<div style={{
+  backgroundColor: 'white',
+  padding: '16px 20px',
+  marginBottom: '20px',
+  borderRadius: '8px',
+  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+}}>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+    <span style={{ fontSize: '14px', fontWeight: '500', color: '#333' }}>
+      Search by Handler:
+    </span>
+    <input
+      type="text"
+      placeholder="Enter handler name..."
+      value={searchHandledBy}
+      onChange={(e) => setSearchHandledBy(e.target.value)}
+      style={{
+        padding: '8px 12px',
+        border: '1px solid #ddd',
+        borderRadius: '4px',
+        fontSize: '14px',
+        fontFamily: 'Arial, sans-serif',
+        width: '300px'
+      }}
+    />
+    {searchHandledBy && (
+      <button
+        onClick={() => setSearchHandledBy('')}
+        style={{
+          padding: '8px 12px',
+          backgroundColor: '#ff9800',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          fontSize: '13px',
+          fontWeight: '500'
+        }}
+      >
+        ✕ Clear Search
+      </button>
+    )}
+  </div>
+</div>
+      {/* Status Filter Section */} qwertyuiop[]
 
-      {/* Status Filter Section */}
       <div style={{
         backgroundColor: 'white',
         padding: '16px 20px',
