@@ -568,6 +568,51 @@ const filteredOrders = orders.filter(order => {
               {status === 'all' ? 'All' : getStatusLabel(status)} ({getCountByStatus(status)})
             </button>
           ))}
+          {/* Search by Handled By */}
+<div style={{
+  backgroundColor: 'white',
+  padding: '16px 20px',
+  marginBottom: '20px',
+  borderRadius: '8px',
+  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+}}>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+    <span style={{ fontSize: '14px', fontWeight: '500', color: '#333' }}>
+      Search by Handler:
+    </span>
+    <input
+      type="text"
+      placeholder="Enter handler name..."
+      value={searchHandledBy}
+      onChange={(e) => setSearchHandledBy(e.target.value)}
+      style={{
+        padding: '8px 12px',
+        border: '1px solid #ddd',
+        borderRadius: '4px',
+        fontSize: '14px',
+        fontFamily: 'Arial, sans-serif',
+        width: '300px'
+      }}
+    />
+    {searchHandledBy && (
+      <button
+        onClick={() => setSearchHandledBy('')}
+        style={{
+          padding: '8px 12px',
+          backgroundColor: '#ff9800',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          fontSize: '13px',
+          fontWeight: '500'
+        }}
+      >
+        ✕ Clear Search
+      </button>
+    )}
+  </div>
+</div>
         </div>
       </div>
 
@@ -701,51 +746,6 @@ const filteredOrders = orders.filter(order => {
           </tbody>
         </table>
       </div>
-      {/* Search by Handled By */}
-<div style={{
-  backgroundColor: 'white',
-  padding: '16px 20px',
-  marginBottom: '20px',
-  borderRadius: '8px',
-  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-}}>
-  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-    <span style={{ fontSize: '14px', fontWeight: '500', color: '#333' }}>
-      Search by Handler:
-    </span>
-    <input
-      type="text"
-      placeholder="Enter handler name..."
-      value={searchHandledBy}
-      onChange={(e) => setSearchHandledBy(e.target.value)}
-      style={{
-        padding: '8px 12px',
-        border: '1px solid #ddd',
-        borderRadius: '4px',
-        fontSize: '14px',
-        fontFamily: 'Arial, sans-serif',
-        width: '300px'
-      }}
-    />
-    {searchHandledBy && (
-      <button
-        onClick={() => setSearchHandledBy('')}
-        style={{
-          padding: '8px 12px',
-          backgroundColor: '#ff9800',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          fontSize: '13px',
-          fontWeight: '500'
-        }}
-      >
-        ✕ Clear Search
-      </button>
-    )}
-  </div>
-</div>
 
       <style>{`
         @keyframes pulse {
