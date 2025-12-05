@@ -565,12 +565,13 @@ const filteredOrders = orders.filter(order => {
             )}
           </div>
                   {/* Search Handler Row */}
-        <div style={{ marginBottom: '20px' }}>
-          <div>
+        <div style={{ marginBottom: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexDirection: 'column'}}>
 
-              Search By Name:
+              <label htmlFor="searchHandledBy">Search By Name:</label>
     
             <input
+              id="searchHandledBy"
               type="text"
               placeholder="Search by handler name..."
               value={searchHandledBy}
