@@ -115,44 +115,7 @@ export default function ProductsPage({ user, onBack }) {
       backgroundColor: '#f5f5f5',
       minHeight: '100vh'
     }}>
-      {/* Header */}
-      <div style={{
-        backgroundColor: 'white',
-        padding: '16px 20px',
-        marginBottom: '20px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        borderRadius: '8px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <button
-            onClick={onBack}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#757575',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: '500'
-            }}
-          >
-            ← Back to Orders
-          </button>
-          <h1 style={{ margin: 0, fontSize: '24px' }}>Products Inventory</h1>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <span style={{ fontSize: '14px', color: '#666' }}>
-            Total: <strong>{totalProducts}</strong> products
-          </span>
-          <span style={{ fontSize: '14px', color: '#666' }}>
-            Welcome, <strong>{user.name}</strong>
-          </span>
-        </div>
-      </div>
+
 
       {/* Search and Sort Section */}
       <div style={{

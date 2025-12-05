@@ -472,54 +472,7 @@ const filteredOrders = orders.filter(order => {
       backgroundColor: '#f5f5f5',
       minHeight: '100vh'
     }}>
-      {/* Header */}
-      <div style={{
-        backgroundColor: 'white',
-        padding: '16px 20px',
-        marginBottom: '20px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        borderRadius: '8px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-      }}>
-        <h1 style={{ margin: 0, fontSize: '24px' }}>Orders Dashboard</h1>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <span style={{ fontSize: '14px', color: '#666' }}>
-            Welcome, <strong>{user.name}</strong>
-          </span>
-          <span style={{ fontSize: '14px', color: '#666' }}>
-            {filteredOrders.length} orders
-          </span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{
-              width: '10px',
-              height: '10px',
-              borderRadius: '50%',
-              backgroundColor: connected ? '#4caf50' : '#f44336',
-              animation: connected ? 'pulse 2s infinite' : 'none'
-            }}></span>
-            <span style={{ fontSize: '13px', color: '#666', fontWeight: '500' }}>
-              {connected ? 'Live' : reconnectAttempts > 0 ? `Reconnecting (${reconnectAttempts})` : 'Offline'}
-            </span>
-          </div>
-          <button
-            onClick={onLogout}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#f44336',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: '500'
-            }}
-          >
-            Logout
-          </button>
-        </div>
-      </div>
+
 
       {/* Date Filter Section */}
       <div style={{
