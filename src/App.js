@@ -1,262 +1,337 @@
-import { useState, useEffect } from 'react';
+const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-import Login from './components/Login';
-import Orders from './components/Orders';
-import ProductsPage from './components/ProductsPage';
-import AdminDashboard from './components/AdminDashboard';
-import UserProfileDashboard from './components/UserProfileDashboard';
-import LogisticsChatbot from './components/LogisticsChatbot';
+useEffect(() => {
+  const handleResize = () => setIsMobile(window.innerWidth <= 768);
+  window.addEventListener('resize', handleResize);
+  return () => window.removeEventListener('resize', handleResize);
+}, []);
 
-export default function IntegratedApp() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [currentView, setCurrentView] = useState('orders'); 
-  const [ordersFilterStatus, setOrdersFilterStatus] = useState('all');
+const buttonStyle = (isActive, color = '#BCB9AC') => ({
+  padding: isMobile ? '10px 20px' : '12px 28px',
+  minHeight: '50px',
+  backgroundColor: isActive ? color : 'transparent',
+  color: isActive ? '#123249' : '#123249',
+  border: isActive ? 'none' : '2px solid rgba(18, 50, 73, 0.3)',
+  borderRadius: '50px',
+  cursor: 'pointer',
+  fontWeight: '600',
+  fontSize: isMobile ? '12px' : '13px',
+  transition: 'all 0.3s ease',
+  whiteSpace: 'nowrap',
+  boxShadow: isActive ? '0 4px 12px rgba(188, 185, 172, 0.4)' : 'none',
+});
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const savedUser = localStorage.getItem('user');
-    
-    if (token && savedUser) {
-      const userData = JSON.parse(savedUser);
-      setUser(userData);
-      
-      // If admin, show admin dashboard by default
-      if (userData.isAdmin) {
-        setCurrentView('admin_dashboard');
-      }
-    }
-    setLoading(false);
-  }, []);
+return (
+  <div style={{
+    fontFamily: 'Arial, sans-serif',
+    padding: isMobile ? '12px' : '20px',
+    backgroundColor: '#f5f5f5',
+    minHeight: '100vh'
+  }}>
 
-  const handleLogin = (userData) => {
-    setUser(userData);
-    // Set default view based on role
-    if (userData.isAdmin) {
-      setCurrentView('admin_dashboard');
-    } else {
-      setCurrentView('orders');
-    }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser(null);
-    setCurrentView('orders');
-  };
-
-  const navigateToOrders = (status = 'all') => {
-    setOrdersFilterStatus(status);
-    setCurrentView('orders');
-  };
-
-  const navigateToProducts = () => setCurrentView('products');
-  const navigateToAdminDashboard = () => setCurrentView('admin_dashboard');
-  const navigateToProfileDashboard = () => setCurrentView('profile_dashboard');
-  const navigateToRoutes = () => setCurrentView('routes');
-
-  if (loading) {
-    return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        fontFamily: 'Arial, sans-serif'
-      }}>
-        Loading...
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <Login onLogin={handleLogin} />;
-  }
-
-  const NavigationMenu = () => {
-    const isAdmin = user?.isAdmin === true;
-    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-
-    useEffect(() => {
-      const handleResize = () => setIsMobile(window.innerWidth <= 768);
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    const buttonStyle = (isActive) => ({
-      padding: isMobile ? '10px 24px' : '12px 32px',
-      minHeight: '50px',
-      backgroundColor: isActive ? '#BCB9AC' : 'transparent',
-      color: isActive ? '#123249' : 'white',
-      border: isActive ? 'none' : '2px solid rgba(188, 185, 172, 0.5)',
-      borderRadius: '50px',
-      cursor: 'pointer',
-      fontWeight: '600',
-      fontSize: isMobile ? '13px' : '14px',
-      transition: 'all 0.3s ease',
-      whiteSpace: 'nowrap',
-      boxShadow: isActive ? '0 4px 12px rgba(188, 185, 172, 0.3)' : 'none',
-    });
-
-    const hoverEffect = (e, isActive) => {
-      if (!isActive) {
-        e.target.style.backgroundColor = 'rgba(188, 185, 172, 0.2)';
-        e.target.style.borderColor = '#BCB9AC';
-      }
-    };
-
-    const leaveEffect = (e, isActive) => {
-      if (!isActive) {
-        e.target.style.backgroundColor = 'transparent';
-        e.target.style.borderColor = 'rgba(188, 185, 172, 0.5)';
-      }
-    };
-
-    return (
-      <div style={{
-        backgroundColor: '#123249',
-        padding: isMobile ? '12px 16px' : '16px 20px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
-        position: 'sticky',
-        top: 0,
-        zIndex: 100,
-        flexWrap: 'wrap',
-        gap: '12px'
-      }}>
-        <div style={{ 
+    {/* Filters and Search Section - Side by Side */}
+    <div style={{
+      backgroundColor: 'white',
+      padding: isMobile ? '16px' : '20px 24px',
+      marginBottom: '20px',
+      borderRadius: '12px',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+    }}>
+      {/* Date Filter Row */}
+      <div style={{ marginBottom: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '14px', fontWeight: '600', color: '#123249' }}>
+            📅 Select Date:
+          </span>
           
-          display: 'flex', 
-          gap: isMobile ? '8px' : '12px', 
-          alignItems: 'center', 
-          flexWrap: 'wrap',
-          flex: 1
-        }}>
-          
-          {/* Orders - For all users */}
-          {(!isMobile || (isMobile && ['orders', 'products'].includes(currentView))) && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              style={{
+                padding: '10px 14px',
+                border: '2px solid rgba(18, 50, 73, 0.2)',
+                borderRadius: '25px',
+                fontSize: '13px',
+                fontFamily: 'Arial, sans-serif',
+                minWidth: isMobile ? '130px' : '150px'
+              }}
+            />
+            <span style={{ color: '#123249', fontWeight: '600' }}>to</span>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              style={{
+                padding: '10px 14px',
+                border: '2px solid rgba(18, 50, 73, 0.2)',
+                borderRadius: '25px',
+                fontSize: '13px',
+                fontFamily: 'Arial, sans-serif',
+                minWidth: isMobile ? '130px' : '150px'
+              }}
+            />
+          </div>
+
+          {(startDate || endDate) && (
             <button
-              onClick={() => navigateToOrders('all')}
-              onMouseEnter={(e) => hoverEffect(e, currentView === 'orders')}
-              onMouseLeave={(e) => leaveEffect(e, currentView === 'orders')}
-              style={buttonStyle(currentView === 'orders')}
+              onClick={resetDateFilter}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#f44336',
+                color: 'white',
+                border: 'none',
+                borderRadius: '25px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: '600',
+                boxShadow: '0 2px 8px rgba(244, 67, 54, 0.3)',
+                transition: 'all 0.3s ease'
+              }}
             >
-              Orders
+              ✕ Clear
             </button>
           )}
-
-          {/* Products - For all users */}
-          {(!isMobile || (isMobile && ['orders', 'products'].includes(currentView))) && (
-            <button
-              onClick={navigateToProducts}
-              onMouseEnter={(e) => hoverEffect(e, currentView === 'products')}
-              onMouseLeave={(e) => leaveEffect(e, currentView === 'products')}
-              style={buttonStyle(currentView === 'products')}
-            >
-              Products
-            </button>
-          )}
-
-          {/* Admin Dashboard - ONLY for Admin */}
-          {isAdmin && (!isMobile || (isMobile && ['admin_dashboard', 'profile_dashboard'].includes(currentView))) && (
-            <button
-              onClick={navigateToAdminDashboard}
-              onMouseEnter={(e) => hoverEffect(e, currentView === 'admin_dashboard')}
-              onMouseLeave={(e) => leaveEffect(e, currentView === 'admin_dashboard')}
-              style={buttonStyle(currentView === 'admin_dashboard')}
-            >
-              Dashboard
-            </button>
-          )}
-
-          {/* User Profile - For all users */}
-          {(!isMobile || (isMobile && ['admin_dashboard', 'profile_dashboard'].includes(currentView))) && (
-            <button
-              onClick={navigateToProfileDashboard}
-              onMouseEnter={(e) => hoverEffect(e, currentView === 'profile_dashboard')}
-              onMouseLeave={(e) => leaveEffect(e, currentView === 'profile_dashboard')}
-              style={buttonStyle(currentView === 'profile_dashboard')}
-            >
-              My Profile
-            </button>
-          )}
-
         </div>
+      </div>
 
-        {/* Right Side */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
-          {!isMobile && (
-            <span style={{ color: 'white', fontSize: '14px' }}>
-              Welcome, <strong>{user.name}</strong>
-              {isAdmin && (
-                <span style={{ 
-                  marginLeft: '8px', 
-                  fontSize: '11px', 
-                  backgroundColor: '#BCB9AC', 
-                  color: '#123249',
-                  padding: '4px 10px', 
-                  borderRadius: '50px',
-                  fontWeight: 'bold'
-                }}>
-                  Admin
-                </span>
-              )}
-            </span>
-          )}
-          <button
-            onClick={handleLogout}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = '#c62828';
-              e.target.style.transform = 'scale(1.05)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = '#f44336';
-              e.target.style.transform = 'scale(1)';
-            }}
+      {/* Search Handler Row */}
+      <div style={{ marginBottom: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '14px', fontWeight: '600', color: '#123249' }}>
+            🔍 Handler:
+          </span>
+          <input
+            type="text"
+            placeholder="Search by handler name..."
+            value={searchHandledBy}
+            onChange={(e) => setSearchHandledBy(e.target.value)}
             style={{
-              padding: isMobile ? '10px 20px' : '12px 28px',
-              minHeight: '50px',
-              backgroundColor: '#f44336',
-              color: 'white',
-              border: 'none',
-              borderRadius: '50px',
-              cursor: 'pointer',
-              fontWeight: '600',
-              fontSize: isMobile ? '13px' : '14px',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 4px 12px rgba(244, 67, 54, 0.3)'
+              padding: '10px 20px',
+              border: '2px solid rgba(18, 50, 73, 0.2)',
+              borderRadius: '25px',
+              fontSize: '13px',
+              fontFamily: 'Arial, sans-serif',
+              flex: isMobile ? '1 1 100%' : '1 1 300px',
+              maxWidth: isMobile ? '100%' : '400px'
             }}
-          >
-            Logout
-          </button>
+          />
+          {searchHandledBy && (
+            <button
+              onClick={() => setSearchHandledBy('')}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#f44336',
+                color: 'white',
+                border: 'none',
+                borderRadius: '25px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: '600',
+                boxShadow: '0 2px 8px rgba(244, 67, 54, 0.3)',
+                transition: 'all 0.3s ease'
+              }}
+            >
+              ✕ Clear
+            </button>
+          )}
         </div>
       </div>
-    );
-  };
 
-  return (
-    <div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#f5f5f5', minHeight: '100vh' }}>
-      <NavigationMenu />
-
-      {/* All users (including admin) can access all views */}
-      {currentView === 'orders' && (
-        <Orders user={user} initialFilterStatus={ordersFilterStatus} />
-      )}
-
-      {currentView === 'products' && (
-        <ProductsPage user={user} onBack={() => navigateToOrders('all')} />
-      )}
-
-      {currentView === 'admin_dashboard' && (
-        <AdminDashboard user={user} onNavigateToOrders={navigateToOrders} />
-      )}
-
-      {currentView === 'profile_dashboard' && (
-        <UserProfileDashboard user={user} onBack={() => navigateToOrders('all')} />
-      )}
+      {/* Status Filter Buttons - Mobile: 2 per row, Desktop: all in one row */}
+      <div>
+        <span style={{ 
+          fontSize: '14px', 
+          fontWeight: '600', 
+          color: '#123249',
+          display: 'block',
+          marginBottom: '12px'
+        }}>
+          📊 Filter by Status:
+        </span>
+        
+        <div style={{ 
+          display: 'grid',
+          gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(140px, auto))',
+          gap: '10px',
+          alignItems: 'center'
+        }}>
+          {['all', 'pending', 'in_progress', 'delivered', 'cancelled', 'rescheduled'].map((status) => (
+            <button
+              key={status}
+              onClick={() => setFilterStatus(status)}
+              style={buttonStyle(
+                filterStatus === status,
+                filterStatus === status ? getStatusColor(status) : '#BCB9AC'
+              )}
+              onMouseEnter={(e) => {
+                if (filterStatus !== status) {
+                  e.target.style.backgroundColor = 'rgba(188, 185, 172, 0.2)';
+                  e.target.style.borderColor = '#BCB9AC';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (filterStatus !== status) {
+                  e.target.style.backgroundColor = 'transparent';
+                  e.target.style.borderColor = 'rgba(18, 50, 73, 0.3)';
+                }
+              }}
+            >
+              {status === 'all' ? '📦 All' : getStatusLabel(status)} ({getCountByStatus(status)})
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
-  );
-}
+
+    {/* Table */}
+    <div style={{
+      backgroundColor: 'white',
+      borderRadius: '12px',
+      overflow: 'hidden',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+    }}>
+      <table style={{
+        width: '100%',
+        borderCollapse: 'collapse',
+        minWidth: '1200px'
+      }}>
+        <thead>
+          <tr style={{
+            backgroundColor: '#123249',
+            color: 'white',
+            borderBottom: '2px solid #dee2e6'
+          }}>
+            <th style={{ padding: '14px 16px', textAlign: 'left', fontWeight: '600' }}>Order ID</th>
+            <th style={{ padding: '14px 16px', textAlign: 'left', fontWeight: '600' }}>Date</th>
+            <th style={{ padding: '14px 16px', textAlign: 'left', fontWeight: '600' }}>Customer</th>
+            <th style={{ padding: '14px 16px', textAlign: 'left', fontWeight: '600' }}>Phone</th>
+            <th style={{ padding: '14px 16px', textAlign: 'left', fontWeight: '600' }}>Address</th>
+            <th style={{ padding: '14px 16px', textAlign: 'left', fontWeight: '600' }}>Items</th>
+            <th style={{ padding: '14px 16px', textAlign: 'right', fontWeight: '600' }}>Total</th>
+            <th style={{ padding: '14px 16px', textAlign: 'center', fontWeight: '600' }}>Status</th>
+            <th style={{ padding: '14px 16px', textAlign: 'left', fontWeight: '600' }}>Handled By</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredOrders.length === 0 ? (
+            <tr>
+              <td colSpan="9" style={{
+                padding: '40px',
+                textAlign: 'center',
+                color: '#999',
+                fontSize: '16px'
+              }}>
+                {filterStatus === 'all' && !startDate && !endDate 
+                  ? 'No orders found' 
+                  : `No orders found for selected filters`}
+              </td>
+            </tr>
+          ) : (
+            filteredOrders.map((order) => (
+              <tr key={order._id} style={{
+                borderBottom: '1px solid #e9ecef',
+                transition: 'background-color 0.2s'
+              }}>
+                <td style={{ padding: '12px 16px', color: '#123249', fontWeight: '600' }}>
+                  {order.order_number}
+                </td>
+                <td style={{ padding: '12px 16px', fontSize: '13px' }}>
+                  {getOrderDate(order)}
+                </td>
+                <td style={{ padding: '12px 16px' }}>
+                  {order.customer_full_name}
+                </td>
+                <td style={{ padding: '12px 16px' }}>
+                  {order.customer_phone}
+                </td>
+                <td style={{ padding: '12px 16px', maxWidth: '250px', fontSize: '13px' }}>
+                  {order.full_address}
+                </td>
+                <td style={{ padding: '12px 16px', fontSize: '13px' }}>
+                  {order.line_items?.map((item, idx) => (
+                    <div key={idx} style={{ padding: '2px 0' }}>
+                      {item.quantity}x {item.title}
+                    </div>
+                  ))}
+                </td>
+                <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: '600', color: '#123249' }}>
+                  {order.total}
+                </td>
+                <td style={{ padding: '12px 16px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <div style={{
+                      display: 'inline-block',
+                      padding: '6px 12px',
+                      backgroundColor: getStatusColor(order.status),
+                      color: 'white',
+                      borderRadius: '25px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      textAlign: 'center',
+                      marginBottom: '8px'
+                    }}>
+                      {getStatusLabel(order.status)}
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                      {['delivered', 'in_progress', 'cancelled', 'rescheduled'].map((status) => (
+                        <button
+                          key={status}
+                          onClick={() => updateOrderStatus(order._id, status)}
+                          disabled={updatingOrder === order._id || order.status === status}
+                          style={{
+                            padding: '6px 12px',
+                            fontSize: '11px',
+                            backgroundColor: order.status === status ? '#BCB9AC' : '#f0f0f0',
+                            color: order.status === status ? '#123249' : '#666',
+                            border: order.status === status ? 'none' : '1px solid #ddd',
+                            borderRadius: '20px',
+                            cursor: updatingOrder === order._id || order.status === status ? 'not-allowed' : 'pointer',
+                            opacity: order.status === status ? 0.6 : 1,
+                            fontWeight: '600',
+                            transition: 'all 0.2s ease'
+                          }}
+                        >
+                          {status === 'in_progress' ? 'In Progress' : 
+                           status.charAt(0).toUpperCase() + status.slice(1)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </td>
+                <td style={{ padding: '12px 16px', fontSize: '13px' }}>
+                  {order.handled_by?.name ? (
+                    <div>
+                      <div style={{ fontWeight: '600', color: '#123249' }}>{order.handled_by.name}</div>
+                      <div style={{ fontSize: '11px', color: '#666' }}>
+                        {new Date(order.handled_by.updated_at).toLocaleString('en-PK')}
+                      </div>
+                    </div>
+                  ) : (
+                    <span style={{ color: '#999' }}>—</span>
+                  )}
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+
+    <style>{`
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      
+      input[type="date"]::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+      }
+      
+      tr:hover {
+        background-color: rgba(188, 185, 172, 0.1) !important;
+      }
+    `}</style>
+  </div>
+);
