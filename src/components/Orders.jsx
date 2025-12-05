@@ -59,8 +59,9 @@ function Login({ onLogin }) {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: '#f5f5f5',
-      fontFamily: 'Arial, sans-serif'
+      backgroundColor: '#123249',
+      fontFamily: 'Arial, sans-serif',
+      padding: '20px'
     }}>
       <div style={{
         backgroundColor: 'white',
@@ -70,7 +71,7 @@ function Login({ onLogin }) {
         width: '100%',
         maxWidth: '400px'
       }}>
-        <h2 style={{ marginTop: 0, marginBottom: '24px', textAlign: 'center' }}>
+        <h2 style={{ marginTop: 0, marginBottom: '24px', textAlign: 'center', color: '#123249' }}>
           {isRegistering ? 'Create Account' : 'Login'}
         </h2>
 
@@ -90,7 +91,7 @@ function Login({ onLogin }) {
         <div>
           {isRegistering && (
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+              <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500', color: '#123249' }}>
                 Name
               </label>
               <input
@@ -100,18 +101,23 @@ function Login({ onLogin }) {
                 onKeyPress={handleKeyPress}
                 style={{
                   width: '100%',
-                  padding: '10px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  fontSize: '14px',
-                  boxSizing: 'border-box'
+                  padding: '16px',
+             
+                  color: '#123249',
+                  border: 'none',
+                  borderRadius: '50px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: loading ? 'none' : '0 4px 12px rgba(188, 185, 172, 0.3)'
                 }}
               />
             </div>
           )}
 
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+            <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500', color: '#123249' }}>
               Email
             </label>
             <input
@@ -121,17 +127,22 @@ function Login({ onLogin }) {
               onKeyPress={handleKeyPress}
               style={{
                 width: '100%',
-                padding: '10px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '14px',
-                boxSizing: 'border-box'
+              padding: '16px',
+   
+              color: '#123249',
+              border: 'none',
+              borderRadius: '50px',
+              fontSize: '16px',
+              fontWeight: '600',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              transition: 'all 0.3s ease',
+              boxShadow: loading ? 'none' : '0 4px 12px rgba(188, 185, 172, 0.3)'
               }}
             />
           </div>
 
           <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500' }}>
+            <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', fontWeight: '500', color: '#123249' }}>
               Password
             </label>
             <input
@@ -141,11 +152,15 @@ function Login({ onLogin }) {
               onKeyPress={handleKeyPress}
               style={{
                 width: '100%',
-                padding: '10px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '14px',
-                boxSizing: 'border-box'
+              padding: '16px',
+              color: '#123249',
+              border: 'none',
+              borderRadius: '50px',
+              fontSize: '16px',
+              fontWeight: '600',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              transition: 'all 0.3s ease',
+              boxShadow: loading ? 'none' : '0 4px 12px rgba(188, 185, 172, 0.3)'
               }}
             />
           </div>
@@ -155,21 +170,23 @@ function Login({ onLogin }) {
             disabled={loading}
             style={{
               width: '100%',
-              padding: '12px',
-              backgroundColor: loading ? '#ccc' : '#1976d2',
-              color: 'white',
+              padding: '16px',
+              backgroundColor: loading ? '#999' : '#BCB9AC',
+              color: '#123249',
               border: 'none',
-              borderRadius: '4px',
+              borderRadius: '50px',
               fontSize: '16px',
-              fontWeight: '500',
-              cursor: loading ? 'not-allowed' : 'pointer'
+              fontWeight: '600',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              transition: 'all 0.3s ease',
+              boxShadow: loading ? 'none' : '0 4px 12px rgba(188, 185, 172, 0.3)'
             }}
           >
             {loading ? 'Please wait...' : (isRegistering ? 'Register' : 'Login')}
           </button>
         </div>
 
-        <div style={{ marginTop: '16px', textAlign: 'center', fontSize: '14px' }}>
+        <div style={{ marginTop: '16px', textAlign: 'center', fontSize: '14px', color: '#666' }}>
           {isRegistering ? 'Already have an account?' : "Don't have an account?"}
           {' '}
           <button
@@ -180,9 +197,10 @@ function Login({ onLogin }) {
             style={{
               background: 'none',
               border: 'none',
-              color: '#1976d2',
+              color: '#BCB9AC',
               cursor: 'pointer',
-              textDecoration: 'underline'
+              textDecoration: 'underline',
+              fontWeight: '600'
             }}
           >
             {isRegistering ? 'Login' : 'Register'}
