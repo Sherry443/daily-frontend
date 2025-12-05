@@ -134,13 +134,13 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
     <div style={{
       fontFamily: 'Arial, sans-serif',
       padding: '20px',
-      backgroundColor: '#123249',
+  
       minHeight: '100vh'
     }}>
 
       {/* Date Filter */}
       <div style={{
-        backgroundColor: 'rgba(188, 185, 172, 0.1)',
+  
         padding: '16px 20px',
         marginBottom: '20px',
         borderRadius: '50px',
@@ -162,7 +162,7 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
                 borderRadius: '50px',
                 fontSize: '14px',
                 fontFamily: 'Arial, sans-serif',
-                backgroundColor: 'rgba(18, 50, 73, 0.5)',
+           
                 color: '#BCB9AC',
                 outline: 'none',
                 minHeight: '50px'
@@ -179,7 +179,7 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
                 borderRadius: '50px',
                 fontSize: '14px',
                 fontFamily: 'Arial, sans-serif',
-                backgroundColor: 'rgba(18, 50, 73, 0.5)',
+ 
                 color: '#BCB9AC',
                 outline: 'none',
                 minHeight: '50px'
@@ -231,7 +231,7 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
               key={card.key}
               onClick={() => handleStatusCardClick(card.key)}
               style={{
-                backgroundColor: 'rgba(188, 185, 172, 0.1)',
+               
                 padding: '24px',
                 borderRadius: '16px',
                 border: '1px solid rgba(188, 185, 172, 0.2)',
@@ -266,7 +266,7 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
         {/* Total Orders Card */}
         <div
           style={{
-            backgroundColor: 'rgba(188, 185, 172, 0.1)',
+        
             padding: '24px',
             borderRadius: '16px',
             border: '1px solid rgba(188, 185, 172, 0.2)'
@@ -284,7 +284,7 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
         {/* Revenue Card */}
         <div
           style={{
-            backgroundColor: 'rgba(188, 185, 172, 0.1)',
+      
             padding: '24px',
             borderRadius: '16px',
             border: '1px solid rgba(188, 185, 172, 0.2)'
@@ -309,7 +309,7 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
       }}>
         {/* Bar Chart */}
         <div style={{
-          backgroundColor: 'rgba(188, 185, 172, 0.1)',
+         
           padding: '20px',
           borderRadius: '16px',
           border: '1px solid rgba(188, 185, 172, 0.2)'
@@ -341,7 +341,7 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
 
         {/* Pie Chart */}
         <div style={{
-          backgroundColor: 'rgba(188, 185, 172, 0.1)',
+        
           padding: '20px',
           borderRadius: '16px',
           border: '1px solid rgba(188, 185, 172, 0.2)'
@@ -381,7 +381,7 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
       {/* Top Handlers Section */}
       {stats.topHandlers && stats.topHandlers.length > 0 && (
         <div style={{
-          backgroundColor: 'rgba(188, 185, 172, 0.1)',
+       
           padding: '20px',
           borderRadius: '16px',
           border: '1px solid rgba(188, 185, 172, 0.2)',
@@ -437,7 +437,7 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
       {/* Recent Orders Section */}
       {stats.recentOrders && stats.recentOrders.length > 0 && (
         <div style={{
-          backgroundColor: 'rgba(188, 185, 172, 0.1)',
+        
           padding: '20px',
           borderRadius: '16px',
           border: '1px solid rgba(188, 185, 172, 0.2)'
