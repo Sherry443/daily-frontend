@@ -175,7 +175,6 @@ export default function UserProfileDashboard({ user, onBack }) {
     }}>
       {/* Date Filter */}
       <div style={{
-        backgroundColor: 'rgba(188, 185, 172, 0.1)',
         padding: '8px 40px',
         marginBottom: '20px',
         borderRadius: '12px',
@@ -199,7 +198,7 @@ export default function UserProfileDashboard({ user, onBack }) {
                 fontFamily: 'Arial, sans-serif',
                 backgroundColor: 'white',
                 outline: 'none',
-                minHeight: '50px'
+                minHeight: '35px'
               }}
             />
             <span style={{ color: '#BCB9AC', fontWeight: '600' }}>TO</span>
@@ -215,7 +214,7 @@ export default function UserProfileDashboard({ user, onBack }) {
                 fontFamily: 'Arial, sans-serif',
                 backgroundColor: 'white',
                 outline: 'none',
-                minHeight: '50px'
+                minHeight: '35px'
               }}
             />
           </div>
