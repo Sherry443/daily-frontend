@@ -94,19 +94,19 @@ export default function UserOrdersList() {
         backgroundColor: 'rgba(188, 185, 172, 0.1)',
         padding: '20px',
         marginBottom: '20px',
-        borderRadius: '12px',
+        borderRadius: '32px',
         border: '1px solid rgba(188, 185, 172, 0.2)'
       }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '18px', alignItems: 'center' }}>
           {/* Status Filter */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <label style={{ fontSize: '14px', fontWeight: '500', color: '#BCB9AC' }}>Status:</label>
             <select
               value={status}
               onChange={(e) => { setStatus(e.target.value); setPage(1); }}
               style={{
-                padding: '12px 16px',
-                minHeight: '50px',
+                padding: '6px 28px',
+                minHeight: '35px',
                 border: '2px solid #BCB9AC',
                 borderRadius: '50px',
                 fontSize: '14px',
@@ -133,8 +133,8 @@ export default function UserOrdersList() {
               value={startDate}
               onChange={(e) => { setStartDate(e.target.value); setPage(1); }}
               style={{
-                padding: '12px 16px',
-                minHeight: '50px',
+                padding: '6px 28px',
+                minHeight: '35px',
                 border: '2px solid #BCB9AC',
                 borderRadius: '50px',
                 fontSize: '14px',
@@ -145,15 +145,15 @@ export default function UserOrdersList() {
             />
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <label style={{ fontSize: '14px', fontWeight: '500', color: '#BCB9AC' }}>To:</label>
             <input
               type="date"
               value={endDate}
               onChange={(e) => { setEndDate(e.target.value); setPage(1); }}
               style={{
-                padding: '12px 16px',
-                minHeight: '50px',
+                padding: '6px 28px',
+                minHeight: '35px',
                 border: '2px solid #BCB9AC',
                 borderRadius: '50px',
                 fontSize: '14px',
@@ -171,8 +171,8 @@ export default function UserOrdersList() {
               value={sort}
               onChange={(e) => setSort(e.target.value)}
               style={{
-                padding: '12px 16px',
-                minHeight: '50px',
+                padding: '6px 28px',
+                minHeight: '35px',
                 border: '2px solid #BCB9AC',
                 borderRadius: '50px',
                 fontSize: '14px',
@@ -191,8 +191,8 @@ export default function UserOrdersList() {
           <button
             onClick={resetFilters}
             style={{
-              padding: '14px 28px',
-              minHeight: '50px',
+              padding: '6px 28px',
+              minHeight: '35px',
               backgroundColor: '#BCB9AC',
               color: '#123249',
               border: 'none',
