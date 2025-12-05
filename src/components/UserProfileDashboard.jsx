@@ -186,13 +186,13 @@ export default function UserProfileDashboard({ user, onBack }) {
             Date Range:
           </span>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               style={{
-                padding: '12px 16px',
+                padding: '8px 22px',
                 border: '2px solid #BCB9AC',
                 borderRadius: '50px',
                 fontSize: '14px',
@@ -208,7 +208,7 @@ export default function UserProfileDashboard({ user, onBack }) {
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               style={{
-                padding: '12px 16px',
+                padding: '8px 22px',
                 border: '2px solid #BCB9AC',
                 borderRadius: '50px',
                 fontSize: '14px',
