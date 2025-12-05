@@ -77,15 +77,9 @@ export default function IntegratedApp() {
   const NavigationMenu = () => {
     const isAdmin = user?.isAdmin === true;
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-    const [menuOpen, setMenuOpen] = useState(false);
 
     useEffect(() => {
-      const handleResize = () => {
-        setIsMobile(window.innerWidth <= 768);
-        if (window.innerWidth > 768) {
-          setMenuOpen(false);
-        }
-      };
+      const handleResize = () => setIsMobile(window.innerWidth <= 768);
       window.addEventListener('resize', handleResize);
       return () => window.removeEventListener('resize', handleResize);
     }, []);
@@ -103,7 +97,6 @@ export default function IntegratedApp() {
       transition: 'all 0.3s ease',
       whiteSpace: 'nowrap',
       boxShadow: isActive ? '0 4px 12px rgba(188, 185, 172, 0.3)' : 'none',
-      width: isMobile ? '100%' : 'auto',
     });
 
     const hoverEffect = (e, isActive) => {
@@ -120,250 +113,127 @@ export default function IntegratedApp() {
       }
     };
 
-    const handleMenuItemClick = (action) => {
-      action();
-      setMenuOpen(false);
-    };
-
     return (
-      <>
-        <div style={{
-          backgroundColor: '#123249',
-          padding: isMobile ? '12px 16px' : '16px 20px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
-          position: 'sticky',
-          top: 0,
-          zIndex: 100,
+      <div style={{
+        backgroundColor: '#123249',
+        padding: isMobile ? '12px 16px' : '16px 20px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
+        flexWrap: 'wrap',
+        gap: '12px'
+      }}>
+        <div style={{ 
+          
+          display: 'flex', 
+          gap: isMobile ? '8px' : '12px', 
+          alignItems: 'center', 
+          flexWrap: 'wrap',
+          flex: 1
         }}>
-          {/* Mobile Layout */}
-          {isMobile ? (
-            <>
-              <button
-                onClick={() => setMenuOpen(!menuOpen)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '8px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '5px',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  width: '40px',
-                  height: '40px'
-                }}
-              >
-                <div style={{
-                  width: '28px',
-                  height: '2px',
-                  backgroundColor: '#BCB9AC',
-                  transition: 'all 0.3s ease',
-                  transform: menuOpen ? 'rotate(45deg) translateY(7px)' : 'none'
-                }}></div>
-                <div style={{
-                  width: '28px',
-                  height: '2px',
-                  backgroundColor: '#BCB9AC',
-                  transition: 'all 0.3s ease',
-                  opacity: menuOpen ? 0 : 1
-                }}></div>
-                <div style={{
-                  width: '28px',
-                  height: '2px',
-                  backgroundColor: '#BCB9AC',
-                  transition: 'all 0.3s ease',
-                  transform: menuOpen ? 'rotate(-45deg) translateY(-7px)' : 'none'
-                }}></div>
-              </button>
-
-              <span style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>
-                {user.name}
-                {isAdmin && (
-                  <span style={{ 
-                    marginLeft: '8px', 
-                    fontSize: '10px', 
-                    backgroundColor: '#BCB9AC', 
-                    color: '#123249',
-                    padding: '3px 8px', 
-                    borderRadius: '50px',
-                    fontWeight: 'bold'
-                  }}>
-                    Admin
-                  </span>
-                )}
-              </span>
-
-              <button
-                onClick={handleLogout}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: '#f44336',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '50px',
-                  cursor: 'pointer',
-                  fontWeight: '600',
-                  fontSize: '12px',
-                  transition: 'all 0.3s ease',
-                }}
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            /* Desktop Layout */
-            <>
-              <div style={{ 
-                display: 'flex', 
-                gap: '12px', 
-                alignItems: 'center', 
-                flex: 1
-              }}>
-                <button
-                  onClick={() => navigateToOrders('all')}
-                  onMouseEnter={(e) => hoverEffect(e, currentView === 'orders')}
-                  onMouseLeave={(e) => leaveEffect(e, currentView === 'orders')}
-                  style={buttonStyle(currentView === 'orders')}
-                >
-                  Orders
-                </button>
-
-                <button
-                  onClick={navigateToProducts}
-                  onMouseEnter={(e) => hoverEffect(e, currentView === 'products')}
-                  onMouseLeave={(e) => leaveEffect(e, currentView === 'products')}
-                  style={buttonStyle(currentView === 'products')}
-                >
-                  Products
-                </button>
-
-                {isAdmin && (
-                  <button
-                    onClick={navigateToAdminDashboard}
-                    onMouseEnter={(e) => hoverEffect(e, currentView === 'admin_dashboard')}
-                    onMouseLeave={(e) => leaveEffect(e, currentView === 'admin_dashboard')}
-                    style={buttonStyle(currentView === 'admin_dashboard')}
-                  >
-                    Dashboard
-                  </button>
-                )}
-
-                <button
-                  onClick={navigateToProfileDashboard}
-                  onMouseEnter={(e) => hoverEffect(e, currentView === 'profile_dashboard')}
-                  onMouseLeave={(e) => leaveEffect(e, currentView === 'profile_dashboard')}
-                  style={buttonStyle(currentView === 'profile_dashboard')}
-                >
-                  My Profile
-                </button>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <span style={{ color: 'white', fontSize: '14px' }}>
-                  Welcome, <strong>{user.name}</strong>
-                  {isAdmin && (
-                    <span style={{ 
-                      marginLeft: '8px', 
-                      fontSize: '11px', 
-                      backgroundColor: '#BCB9AC', 
-                      color: '#123249',
-                      padding: '4px 10px', 
-                      borderRadius: '50px',
-                      fontWeight: 'bold'
-                    }}>
-                      Admin
-                    </span>
-                  )}
-                </span>
-                <button
-                  onClick={handleLogout}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#c62828';
-                    e.target.style.transform = 'scale(1.05)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = '#f44336';
-                    e.target.style.transform = 'scale(1)';
-                  }}
-                  style={{
-                    padding: '12px 28px',
-                    minHeight: '50px',
-                    backgroundColor: '#f44336',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '50px',
-                    cursor: 'pointer',
-                    fontWeight: '600',
-                    fontSize: '14px',
-                    transition: 'all 0.3s ease',
-                    boxShadow: '0 4px 12px rgba(244, 67, 54, 0.3)'
-                  }}
-                >
-                  Logout
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Mobile Dropdown Menu */}
-        {isMobile && menuOpen && (
-          <div style={{
-            backgroundColor: '#123249',
-            padding: '16px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '12px',
-            boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
-            position: 'sticky',
-            top: '64px',
-            zIndex: 99,
-            borderTop: '1px solid rgba(188, 185, 172, 0.3)'
-          }}>
+          
+          {/* Orders - For all users */}
+          {(!isMobile || (isMobile && ['orders', 'products'].includes(currentView))) && (
             <button
-              onClick={() => handleMenuItemClick(() => navigateToOrders('all'))}
+              onClick={() => navigateToOrders('all')}
               onMouseEnter={(e) => hoverEffect(e, currentView === 'orders')}
               onMouseLeave={(e) => leaveEffect(e, currentView === 'orders')}
               style={buttonStyle(currentView === 'orders')}
             >
               Orders
             </button>
+          )}
 
+          {/* Products - For all users */}
+          {(!isMobile || (isMobile && ['orders', 'products'].includes(currentView))) && (
             <button
-              onClick={() => handleMenuItemClick(navigateToProducts)}
+              onClick={navigateToProducts}
               onMouseEnter={(e) => hoverEffect(e, currentView === 'products')}
               onMouseLeave={(e) => leaveEffect(e, currentView === 'products')}
               style={buttonStyle(currentView === 'products')}
             >
               Products
             </button>
+          )}
 
-            {isAdmin && (
-              <button
-                onClick={() => handleMenuItemClick(navigateToAdminDashboard)}
-                onMouseEnter={(e) => hoverEffect(e, currentView === 'admin_dashboard')}
-                onMouseLeave={(e) => leaveEffect(e, currentView === 'admin_dashboard')}
-                style={buttonStyle(currentView === 'admin_dashboard')}
-              >
-                Dashboard
-              </button>
-            )}
-
+          {/* Admin Dashboard - ONLY for Admin */}
+          {isAdmin && (!isMobile || (isMobile && ['admin_dashboard', 'profile_dashboard'].includes(currentView))) && (
             <button
-              onClick={() => handleMenuItemClick(navigateToProfileDashboard)}
+              onClick={navigateToAdminDashboard}
+              onMouseEnter={(e) => hoverEffect(e, currentView === 'admin_dashboard')}
+              onMouseLeave={(e) => leaveEffect(e, currentView === 'admin_dashboard')}
+              style={buttonStyle(currentView === 'admin_dashboard')}
+            >
+              Dashboard
+            </button>
+          )}
+
+          {/* User Profile - For all users */}
+          {(!isMobile || (isMobile && ['admin_dashboard', 'profile_dashboard'].includes(currentView))) && (
+            <button
+              onClick={navigateToProfileDashboard}
               onMouseEnter={(e) => hoverEffect(e, currentView === 'profile_dashboard')}
               onMouseLeave={(e) => leaveEffect(e, currentView === 'profile_dashboard')}
               style={buttonStyle(currentView === 'profile_dashboard')}
             >
               My Profile
             </button>
-          </div>
-        )}
-      </>
+          )}
+
+        </div>
+
+        {/* Right Side */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+          {!isMobile && (
+            <span style={{ color: 'white', fontSize: '14px' }}>
+              Welcome, <strong>{user.name}</strong>
+              {isAdmin && (
+                <span style={{ 
+                  marginLeft: '8px', 
+                  fontSize: '11px', 
+                  backgroundColor: '#BCB9AC', 
+                  color: '#123249',
+                  padding: '4px 10px', 
+                  borderRadius: '50px',
+                  fontWeight: 'bold'
+                }}>
+                  Admin
+                </span>
+              )}
+            </span>
+          )}
+          <button
+            onClick={handleLogout}
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = '#c62828';
+              e.target.style.transform = 'scale(1.05)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = '#f44336';
+              e.target.style.transform = 'scale(1)';
+            }}
+            style={{
+              padding: isMobile ? '10px 20px' : '12px 28px',
+              minHeight: '50px',
+              backgroundColor: '#f44336',
+              color: 'white',
+              border: 'none',
+              borderRadius: '50px',
+              cursor: 'pointer',
+              fontWeight: '600',
+              fontSize: isMobile ? '13px' : '14px',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 4px 12px rgba(244, 67, 54, 0.3)'
+            }}
+          >
+            Logout
+          </button>
+        </div>
+      </div>
     );
   };
 
