@@ -1,3 +1,20 @@
+.flex-responsive {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+  width: 100%;
+  flex-direction: column; /* Default: Mobile */
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+  .flex-responsive {
+    flex-direction: row;
+  }
+}
+
 .orders-container {
   max-width: 1200px;
   margin: 0 auto;
