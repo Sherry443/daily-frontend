@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
+import './Orders.css';
 
 const BACKEND_URL = 'https://daily-backend-wt0j.onrender.com';
 
@@ -45,20 +46,7 @@ function Login({ onLogin }) {
       setLoading(false);
     }
   };
-  const buttonStyle = (isActive, color = '#BCB9AC') => ({
-    padding: isMobile ? '10px 20px' : '12px 28px',
-    minHeight: '50px',
-    backgroundColor: isActive ? color : 'transparent',
-    color: isActive ? '#123249' : '#123249',
-    border: isActive ? 'none' : '2px solid rgba(18, 50, 73, 0.3)',
-    borderRadius: '50px',
-    cursor: 'pointer',
-    fontWeight: '600',
-    fontSize: isMobile ? '12px' : '13px',
-    transition: 'all 0.3s ease',
-    whiteSpace: 'nowrap',
-    boxShadow: isActive ? '0 4px 12px rgba(188, 185, 172, 0.4)' : 'none',
-  });
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       handleSubmit();
@@ -222,7 +210,20 @@ function Orders({ user, onLogout }) {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
+  const buttonStyle = (isActive, color = '#BCB9AC') => ({
+    padding: isMobile ? '10px 20px' : '12px 28px',
+    minHeight: '50px',
+    backgroundColor: isActive ? color : 'transparent',
+    color: isActive ? '#123249' : '#123249',
+    border: isActive ? 'none' : '2px solid rgba(18, 50, 73, 0.3)',
+    borderRadius: '50px',
+    cursor: 'pointer',
+    fontWeight: '600',
+    fontSize: isMobile ? '12px' : '13px',
+    transition: 'all 0.3s ease',
+    whiteSpace: 'nowrap',
+    boxShadow: isActive ? '0 4px 12px rgba(188, 185, 172, 0.4)' : 'none',
+  });
   const socketRef = useRef(null);
 
   useEffect(() => {
@@ -501,7 +502,54 @@ const filteredOrders = orders.filter(order => {
         borderRadius: '12px',
         boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
       }}>
-        {/* Date Filter Row */}
+
+  
+        {/* Search Handler Row */}
+        <div style={{ marginBottom: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '14px', fontWeight: '600', color: '#123249' }}>
+              🔍 Handler:
+            </span>
+            <input
+              type="text"
+              placeholder="Search by handler name..."
+              value={searchHandledBy}
+              onChange={(e) => setSearchHandledBy(e.target.value)}
+              style={{
+                padding: '10px 20px',
+                border: '2px solid rgba(18, 50, 73, 0.2)',
+                borderRadius: '25px',
+                fontSize: '13px',
+                fontFamily: 'Arial, sans-serif',
+                flex: isMobile ? '1 1 100%' : '1 1 300px',
+                maxWidth: isMobile ? '100%' : '400px'
+              }}
+            />
+            {searchHandledBy && (
+              <button
+                onClick={() => setSearchHandledBy('')}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#f44336',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '25px',
+                  cursor: 'pointer',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  boxShadow: '0 2px 8px rgba(244, 67, 54, 0.3)',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                ✕ Clear
+              </button>
+            )}
+          </div>
+        </div>
+  
+        {/* Status Filter Buttons - Mobile: 2 per row, Desktop: all in one row */}
+        <div>
+                  {/* Date Filter Row */}
         <div style={{ marginBottom: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
             <span style={{ fontSize: '14px', fontWeight: '600', color: '#123249' }}>
@@ -559,52 +607,6 @@ const filteredOrders = orders.filter(order => {
             )}
           </div>
         </div>
-  
-        {/* Search Handler Row */}
-        <div style={{ marginBottom: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '14px', fontWeight: '600', color: '#123249' }}>
-              🔍 Handler:
-            </span>
-            <input
-              type="text"
-              placeholder="Search by handler name..."
-              value={searchHandledBy}
-              onChange={(e) => setSearchHandledBy(e.target.value)}
-              style={{
-                padding: '10px 20px',
-                border: '2px solid rgba(18, 50, 73, 0.2)',
-                borderRadius: '25px',
-                fontSize: '13px',
-                fontFamily: 'Arial, sans-serif',
-                flex: isMobile ? '1 1 100%' : '1 1 300px',
-                maxWidth: isMobile ? '100%' : '400px'
-              }}
-            />
-            {searchHandledBy && (
-              <button
-                onClick={() => setSearchHandledBy('')}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: '#f44336',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '25px',
-                  cursor: 'pointer',
-                  fontSize: '13px',
-                  fontWeight: '600',
-                  boxShadow: '0 2px 8px rgba(244, 67, 54, 0.3)',
-                  transition: 'all 0.3s ease'
-                }}
-              >
-                ✕ Clear
-              </button>
-            )}
-          </div>
-        </div>
-  
-        {/* Status Filter Buttons - Mobile: 2 per row, Desktop: all in one row */}
-        <div>
           <span style={{ 
             fontSize: '14px', 
             fontWeight: '600', 
