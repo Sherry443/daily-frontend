@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 
-const BACKEND_URL = 'http://localhost:5000';
+const BACKEND_URL = 'https://daily-backend-wt0j.onrender.com';
 
 export default function ProductsPage({ user, onBack }) {
   const [products, setProducts] = useState([]);
