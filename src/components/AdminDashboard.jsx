@@ -4,7 +4,7 @@ import { Clock, Truck, CheckCircle, XCircle, Calendar, Package, DollarSign, Awar
 
 const BACKEND_URL = 'https://daily-backend-wt0j.onrender.com';
 
-export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
+export default function AdminDashboard({ user, onNavigateToOrders, onUserClick, onBack }) {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [startDate, setStartDate] = useState('');
@@ -140,8 +140,7 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
 
       {/* Date Filter */}
       <div style={{
-  
-  padding: '6px 28px',
+        padding: '6px 28px',
         marginBottom: '20px',
         borderRadius: '35px',
         border: '1px solid rgba(188, 185, 172, 0.2)'
@@ -162,7 +161,6 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
                 borderRadius: '50px',
                 fontSize: '14px',
                 fontFamily: 'Arial, sans-serif',
-           
                 color: '#BCB9AC',
                 outline: 'none',
                 minHeight: '35px'
@@ -179,7 +177,6 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
                 borderRadius: '50px',
                 fontSize: '14px',
                 fontFamily: 'Arial, sans-serif',
- 
                 color: '#BCB9AC',
                 outline: 'none',
                 minHeight: '35px'
@@ -231,7 +228,6 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
               key={card.key}
               onClick={() => handleStatusCardClick(card.key)}
               style={{
-               
                 padding: '24px',
                 borderRadius: '16px',
                 border: '1px solid rgba(188, 185, 172, 0.2)',
@@ -266,7 +262,6 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
         {/* Total Orders Card */}
         <div
           style={{
-        
             padding: '24px',
             borderRadius: '16px',
             border: '1px solid rgba(188, 185, 172, 0.2)'
@@ -284,7 +279,6 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
         {/* Revenue Card */}
         <div
           style={{
-      
             padding: '24px',
             borderRadius: '16px',
             border: '1px solid rgba(188, 185, 172, 0.2)'
@@ -309,7 +303,6 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
       }}>
         {/* Bar Chart */}
         <div style={{
-         
           padding: '20px',
           borderRadius: '16px',
           border: '1px solid rgba(188, 185, 172, 0.2)'
@@ -341,7 +334,6 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
 
         {/* Pie Chart */}
         <div style={{
-        
           padding: '20px',
           borderRadius: '16px',
           border: '1px solid rgba(188, 185, 172, 0.2)'
@@ -378,10 +370,9 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
         </div>
       </div>
 
-      {/* Top Handlers Section */}
+      {/* Top Handlers Section - NOW CLICKABLE */}
       {stats.topHandlers && stats.topHandlers.length > 0 && (
         <div style={{
-       
           padding: '20px',
           borderRadius: '16px',
           border: '1px solid rgba(188, 185, 172, 0.2)',
@@ -390,21 +381,35 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
             <Award size={24} color="#BCB9AC" strokeWidth={1.5} />
             <h3 style={{ margin: 0, fontSize: '18px', color: '#BCB9AC' }}>
-              Top Performers
+              Top Performers (Click to view details)
             </h3>
           </div>
           <div style={{ display: 'grid', gap: '12px' }}>
             {stats.topHandlers.map((handler, index) => (
-              <div key={handler._id} style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '16px',
-                backgroundColor: 'rgba(18, 50, 73, 0.5)',
-                borderRadius: '50px',
-                border: `1px solid ${index === 0 ? '#ffd700' : index === 1 ? '#c0c0c0' : index === 2 ? '#cd7f32' : 'rgba(188, 185, 172, 0.3)'}`,
-                minHeight: '60px'
-              }}>
+              <div 
+                key={handler._id} 
+                onClick={() => onUserClick(handler._id)}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '16px',
+                  backgroundColor: 'rgba(18, 50, 73, 0.5)',
+                  borderRadius: '50px',
+                  border: `1px solid ${index === 0 ? '#ffd700' : index === 1 ? '#c0c0c0' : index === 2 ? '#cd7f32' : 'rgba(188, 185, 172, 0.3)'}`,
+                  minHeight: '60px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateX(8px)';
+                  e.currentTarget.style.backgroundColor = 'rgba(188, 185, 172, 0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateX(0)';
+                  e.currentTarget.style.backgroundColor = 'rgba(18, 50, 73, 0.5)';
+                }}
+              >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <span style={{ 
                     fontSize: '16px', 
@@ -437,7 +442,6 @@ export default function AdminDashboard({ user, onNavigateToOrders, onBack }) {
       {/* Recent Orders Section */}
       {stats.recentOrders && stats.recentOrders.length > 0 && (
         <div style={{
-        
           padding: '20px',
           borderRadius: '16px',
           border: '1px solid rgba(188, 185, 172, 0.2)'
