@@ -379,9 +379,13 @@ export default function IntegratedApp() {
         <ProductsPage user={user} onBack={() => navigateToOrders('all')} />
       )}
 
-      {currentView === 'admin_dashboard' && (
-        <AdminDashboard user={user} onNavigateToOrders={navigateToOrders} />
-      )}
+{currentView === 'admin_dashboard' && (
+  <AdminDashboard 
+    user={user} 
+    onNavigateToOrders={navigateToOrders} 
+    onUserClick={handleUserClick}  // 👈 Ye add karo
+  />
+)}
 
       {currentView === 'profile_dashboard' && (
         <UserProfileDashboard user={user} onBack={() => navigateToOrders('all')} />
