@@ -396,6 +396,9 @@ export default function IntegratedApp() {
       {currentView === 'profile_dashboard' && (
         <UserProfileDashboard user={user} onBack={() => navigateToOrders('all')} />
       )}
+      {currentView === 'user_stats_detail' && selectedUserId && (
+  <UserStatsDetail userId={selectedUserId} onBack={navigateToAdminDashboard} />
+)}
     </div>
   );
 }
