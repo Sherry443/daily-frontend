@@ -6,6 +6,7 @@ import ProductsPage from './components/ProductsPage';
 import AdminDashboard from './components/AdminDashboard';
 import UserProfileDashboard from './components/UserProfileDashboard';
 import LogisticsChatbot from './components/LogisticsChatbot';
+import UserStatsDetail from './components/UserStatsDetail';
 
 export default function IntegratedApp() {
   const [user, setUser] = useState(null);
