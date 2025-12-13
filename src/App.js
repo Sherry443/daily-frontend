@@ -12,6 +12,7 @@ export default function IntegratedApp() {
   const [loading, setLoading] = useState(true);
   const [currentView, setCurrentView] = useState('orders'); 
   const [ordersFilterStatus, setOrdersFilterStatus] = useState('all');
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -49,6 +50,10 @@ export default function IntegratedApp() {
   const navigateToOrders = (status = 'all') => {
     setOrdersFilterStatus(status);
     setCurrentView('orders');
+  };
+  const handleUserClick = (userId) => {
+    setSelectedUserId(userId);
+    setCurrentView('user_stats_detail');
   };
 
   const navigateToProducts = () => setCurrentView('products');
