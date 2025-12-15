@@ -318,7 +318,7 @@ export default function ProductsPage({ user, onBack }) {
                         product.formatted_price
                       ) : (
                         <>
-                          <span style={{ fontSize: '18px', color: '#666' }}>Rs</span>
+                          <span style={{ fontSize: '18px', color: '#666' }}>Sale Price</span>
                           {Number(product.price).toLocaleString('en-PK')}
                         </>
                       )}
