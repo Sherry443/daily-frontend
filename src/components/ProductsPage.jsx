@@ -301,14 +301,14 @@ export default function ProductsPage({ user, onBack }) {
                     color: '#123249',
                     marginBottom: '12px'
                   }}>
-                    {product.total_inventory} <span style={{ fontSize: '16px', color: '#666', fontWeight: '400' }}>units</span>
+                    {product.total_inventory} <span style={{ fontSize: '12px', color: '#666', fontWeight: '300' }}>units</span>
                   </div>
 
                   {/* Sale Price */}
                   {(product.formatted_price || product.price) && (
                     <div style={{
                       fontSize: '24px',
-                      fontWeight: '600',
+                      fontWeight: '300',
                       color: '#4caf50',
                       display: 'flex',
                       alignItems: 'baseline',
@@ -318,7 +318,7 @@ export default function ProductsPage({ user, onBack }) {
                         product.formatted_price
                       ) : (
                         <>
-                          <span style={{ fontSize: '18px', color: '#666' }}>Sale Price</span>
+                          <span style={{ fontSize: '12px', color: '#666' }}>Sale Price</span>
                           {Number(product.price).toLocaleString('en-PK')}
                         </>
                       )}
