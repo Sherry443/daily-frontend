@@ -20,7 +20,7 @@ export default function ProductsPage({ user, onBack }) {
     const socket = io(BACKEND_URL);
     
     socket.on('product_updated', (updatedProduct) => {
-      console.log('📦 Product updated:', updatedProduct.title);
+      console.log(' Product updated:', updatedProduct.title);
       setProducts(prevProducts => {
         const index = prevProducts.findIndex(p => p._id === updatedProduct._id);
         if (index !== -1) {
@@ -298,10 +298,26 @@ export default function ProductsPage({ user, onBack }) {
                   <div style={{
                     fontSize: '32px',
                     fontWeight: '700',
-                    color: '#123249'
+                    color: '#123249',
+                    marginBottom: '12px'
                   }}>
                     {product.total_inventory} <span style={{ fontSize: '16px', color: '#666', fontWeight: '400' }}>units</span>
                   </div>
+
+                  {/* Sale Price */}
+                  {product.price && (
+                    <div style={{
+                      fontSize: '24px',
+                      fontWeight: '600',
+                      color: '#4caf50',
+                      display: 'flex',
+                      alignItems: 'baseline',
+                      gap: '6px'
+                    }}>
+                      <span style={{ fontSize: '18px', color: '#666' }}>$</span>
+                      {parseFloat(product.price).toFixed(2)}
+                    </div>
+                  )}
                 </div>
               </div>
             );

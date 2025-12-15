@@ -381,7 +381,7 @@ export default function AdminDashboard({ user, onNavigateToOrders, onUserClick, 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
             <Award size={24} color="#BCB9AC" strokeWidth={1.5} />
             <h3 style={{ margin: 0, fontSize: '18px', color: '#BCB9AC' }}>
-              Top Performers (Click to view details)
+              Our Riders 
             </h3>
           </div>
           <div style={{ display: 'grid', gap: '12px' }}>
