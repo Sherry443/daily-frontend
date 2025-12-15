@@ -305,7 +305,7 @@ export default function ProductsPage({ user, onBack }) {
                   </div>
 
                   {/* Sale Price */}
-                  {product.price && (
+                  {(product.formatted_price || product.price) && (
                     <div style={{
                       fontSize: '24px',
                       fontWeight: '600',
@@ -314,8 +314,14 @@ export default function ProductsPage({ user, onBack }) {
                       alignItems: 'baseline',
                       gap: '6px'
                     }}>
-                      <span style={{ fontSize: '18px', color: '#666' }}>$</span>
-                      {parseFloat(product.price).toFixed(2)}
+                      {product.formatted_price ? (
+                        product.formatted_price
+                      ) : (
+                        <>
+                          <span style={{ fontSize: '18px', color: '#666' }}>Rs</span>
+                          {Number(product.price).toLocaleString('en-PK')}
+                        </>
+                      )}
                     </div>
                   )}
                 </div>
