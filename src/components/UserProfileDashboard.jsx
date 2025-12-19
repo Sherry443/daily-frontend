@@ -68,8 +68,16 @@ export default function UserProfileDashboard({ user, onBack }) {
       const token = localStorage.getItem('token');
       
       const params = new URLSearchParams();
-      if (startDate) params.append('startDate', startDate);
-      if (endDate) params.append('endDate', endDate);
+      
+      // Pakistan timezone ke liye dates convert karein
+      if (startDate) {
+        const pkStartDate = new Date(startDate + 'T00:00:00+05:00');
+        params.append('startDate', pkStartDate.toISOString());
+      }
+      if (endDate) {
+        const pkEndDate = new Date(endDate + 'T23:59:59+05:00');
+        params.append('endDate', pkEndDate.toISOString());
+      }
 
       const response = await fetch(`${BACKEND_URL}/dashboard/user-stats?${params}`, {
         headers: {
